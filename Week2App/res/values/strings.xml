@@ -1,0 +1,7 @@
+<resources>
+
+    <string name="app_name">Week2App</string>
+    <string name="orient_port">I feel so tall!</string>
+    <string name="orient_land">The world looks flat.</string>
+
+</resources>
