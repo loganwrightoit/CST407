@@ -1,5 +1,6 @@
-package edu.oit.loganwright.firstandroidapp;
+package edu.oit.loganwright.week1app;
 
+import edu.oit.loganwright.firstandroidapp.R;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
