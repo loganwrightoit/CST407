@@ -1,5 +1,6 @@
-package edu.oit.loganwright.week2app;
+package edu.oit.loganwright.week2app_part1;
 
+import edu.oit.loganwright.week2app.R;
 import android.app.Activity;
 import android.os.Bundle;
 
