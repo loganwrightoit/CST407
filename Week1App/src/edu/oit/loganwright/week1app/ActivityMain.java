@@ -1,6 +1,5 @@
 package edu.oit.loganwright.week1app;
 
-import edu.oit.loganwright.firstandroidapp.R;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -9,6 +8,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import edu.oit.loganwright.week1app.R;
 
 @SuppressLint("NewApi")
 public class ActivityMain extends Activity {
