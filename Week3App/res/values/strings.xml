@@ -1,0 +1,9 @@
+<resources>
+
+    <string name="app_name">Week3App</string>
+    <string name="wish_one">Wish 1</string>
+    <string name="wish_two">Wish 2</string>
+    <string name="wish_three">Wish 3</string>
+    <string name="reset">Reset Wishes</string>
+
+</resources>
