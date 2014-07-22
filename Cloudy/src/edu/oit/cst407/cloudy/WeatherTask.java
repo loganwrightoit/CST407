@@ -14,7 +14,6 @@ import org.json.JSONObject;
 
 import android.location.Location;
 import android.os.AsyncTask;
-import android.util.Log;
 
 public class WeatherTask extends AsyncTask<Location, Void, WeatherLocation> {
 
@@ -24,7 +23,7 @@ public class WeatherTask extends AsyncTask<Location, Void, WeatherLocation> {
         JSONObject jsonObject = null;
 
         // Grab content of JSON
-        try {           
+        try {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(url);
             HttpResponse response = httpclient.execute(httppost);
@@ -35,23 +34,22 @@ public class WeatherTask extends AsyncTask<Location, Void, WeatherLocation> {
         }
 
         // Read JSON into string
-        try {           
+        try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(is,"utf-8"),8);
             StringBuilder sb = new StringBuilder();
             String line = null;
             while ((line = reader.readLine()) != null) {
                 sb.append(line + "\n");
-                Log.d("DEBUG: ", line);
             }
             is.close();
-            result = sb.toString();             
+            result = sb.toString();
         } catch(Exception e) {
             return null;
         }
 
         // Convert string to JSONObject
         try {
-            jsonObject = new JSONObject(result);            
+            jsonObject = new JSONObject(result);
         } catch(JSONException e) {
             return null;
         }
@@ -65,7 +63,7 @@ public class WeatherTask extends AsyncTask<Location, Void, WeatherLocation> {
         MainActivity.textView.setText("WeatherTask is processing a location.");
         String url = String.format("http://forecast.weather.gov/MapClick.php?lat=%s&lon=%s&FcstType=json", params[0].getLatitude(), params[0].getLongitude());
         JSONObject object = getJson(url);
-        
+
         WeatherLocation weatherLocation = new WeatherLocation();
 
         try {
@@ -75,10 +73,10 @@ public class WeatherTask extends AsyncTask<Location, Void, WeatherLocation> {
 
         return weatherLocation;
     }
-    
+
     @Override
     protected void onPostExecute(WeatherLocation result) {
-        MainActivity.textView.setText("Your temperature: " + result.getTemp());
+        MainActivity.textView.setText("Outside temperature: " + result.getTemp());
     }
 
 }

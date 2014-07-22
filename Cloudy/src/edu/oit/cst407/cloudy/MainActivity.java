@@ -11,44 +11,36 @@ import android.widget.TextView;
 public class MainActivity extends Activity implements LocationListener {
 
     public static TextView textView;
-	LocationManager locationManager;
-	Location location;
+    LocationManager locationManager;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		
-		textView = (TextView) findViewById(R.id.textView1);
-		textView.setText("Determining temperature for your location...");
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-	}
+        textView = (TextView) findViewById(R.id.textView1);
+        textView.setText("Determining temperature for your location...");
 
-	@Override
-	public void onLocationChanged(Location location) {
-	    
-	    if (location != null) {
-	        textView.setText("Processing a new location...");
-    	    this.location = location;
-    	    locationManager.removeUpdates(this);
-    
-    	    WeatherTask weatherTask = new WeatherTask();
-    	    weatherTask.execute(location);
-	    } else {
-	        textView.setText("Location retrieved was null, continuing...");
-	    }
-	}
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+    }
 
-	@Override
-	public void onProviderDisabled(String provider) {}
+    @Override
+    public void onLocationChanged(Location location) {
+        locationManager.removeUpdates(this);
+        textView.setText("Processing a new location...");
+        
+        WeatherTask weatherTask = new WeatherTask();
+        weatherTask.execute(location);
+    }
 
-	@Override
-	public void onProviderEnabled(String provider) {}
+    @Override
+    public void onProviderDisabled(String provider) {}
 
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {}
+    @Override
+    public void onProviderEnabled(String provider) {}
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {}
 
 }
