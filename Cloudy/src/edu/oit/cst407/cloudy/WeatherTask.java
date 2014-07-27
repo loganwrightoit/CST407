@@ -13,17 +13,20 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class WeatherTask extends AsyncTask<Location, Void, WeatherLocation> {
 
-    private ProgressBar loading_bar = null;
+    private RelativeLayout loading_container = null;
+    private RelativeLayout weather_container = null;    
     private TextView location_text = null;
     private TextView temperature_text = null;
     private TextView weather_text = null;
     
     public WeatherTask(View view) {
-        loading_bar = (ProgressBar) view.findViewById(R.id.loading_bar);
+        loading_container = (RelativeLayout) view.findViewById(R.id.loading_container);
+        weather_container = (RelativeLayout) view.findViewById(R.id.weather_container);
         location_text = (TextView) view.findViewById(R.id.location_text);
         temperature_text = (TextView) view.findViewById(R.id.temperature_text);
         weather_text = (TextView) view.findViewById(R.id.weather_text);
@@ -43,8 +46,8 @@ public class WeatherTask extends AsyncTask<Location, Void, WeatherLocation> {
     
     @Override
     protected void onPreExecute() {
-        loading_bar.setVisibility(View.VISIBLE);
-        temperature_text.setText("Grabbing details for location...");
+        loading_container.setVisibility(View.VISIBLE);
+        weather_container.setVisibility(View.GONE);
     }
 
     @Override
@@ -72,7 +75,8 @@ public class WeatherTask extends AsyncTask<Location, Void, WeatherLocation> {
     @Override
     protected void onPostExecute(WeatherLocation weatherLocation) {
         
-        loading_bar.setVisibility(View.INVISIBLE);
+        loading_container.setVisibility(View.GONE);
+        weather_container.setVisibility(View.VISIBLE);
         
         if (weatherLocation != null) {
             location_text.setText(String.format("%s, %s", weatherLocation.getCity(), weatherLocation.getState()));
