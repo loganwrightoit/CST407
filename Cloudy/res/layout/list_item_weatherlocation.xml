@@ -37,7 +37,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/loading_container" >
+        android:layout_below="@+id/loading_container"
+        android:visibility="invisible" >
 
         <TextView
             android:id="@+id/location_text"
@@ -75,8 +76,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:src="@android:drawable/ic_popup_sync"
-            android:background="@android:color/transparent" />
+            android:background="@android:color/transparent"
+            android:src="@android:drawable/stat_notify_sync_noanim" />
 
     </RelativeLayout>
 

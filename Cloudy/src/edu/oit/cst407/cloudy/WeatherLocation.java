@@ -1,11 +1,23 @@
 package edu.oit.cst407.cloudy;
 
+import android.location.Location;
+
 public class WeatherLocation {
 
     private String city = "";
     private String state = "";
     private String weather = "";
     private int temperature;
+    
+    Location location;
+    
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+    
+    public Location getLocation() {
+        return location;
+    }
 
     public void setCity(String city) {
         this.city = city;

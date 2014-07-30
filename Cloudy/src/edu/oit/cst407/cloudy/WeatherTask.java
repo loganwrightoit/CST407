@@ -1,18 +1,10 @@
 package edu.oit.cst407.cloudy;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.location.Location;
 import android.os.AsyncTask;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -31,19 +23,7 @@ public class WeatherTask extends AsyncTask<Location, Void, WeatherLocation> {
         temperature_text = (TextView) view.findViewById(R.id.temperature_text);
         weather_text = (TextView) view.findViewById(R.id.weather_text);
     }
-    
-    private JSONObject getJson(String url) {
-        try {
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(url);
-            HttpResponse response = httpclient.execute(httppost);
-            HttpEntity entity = response.getEntity();
-            return new JSONObject(EntityUtils.toString(entity));
-        } catch(Exception e) {
-            return null;
-        }
-    }
-    
+        
     @Override
     protected void onPreExecute() {
         loading_container.setVisibility(View.VISIBLE);
@@ -53,7 +33,7 @@ public class WeatherTask extends AsyncTask<Location, Void, WeatherLocation> {
     @Override
     protected WeatherLocation doInBackground(Location... params) {        
         String url = String.format("http://forecast.weather.gov/MapClick.php?lat=%s&lon=%s&FcstType=json", params[0].getLatitude(), params[0].getLongitude());
-        JSONObject object = getJson(url);
+        JSONObject object = JSONUtils.getJson(url);
 
         WeatherLocation weatherLocation = new WeatherLocation();
 
@@ -62,16 +42,20 @@ public class WeatherTask extends AsyncTask<Location, Void, WeatherLocation> {
             weatherLocation.setTemp(current.getInt("Temp"));
             
             String city = current.getString("name");
-            int trimIdx = city.indexOf(",");
             
-            weatherLocation.setCity(city.substring(0, trimIdx));
+            if (city.contains(",")) {
+                weatherLocation.setCity(city.substring(0, city.indexOf(",")));
+            } else {
+                weatherLocation.setCity(city);
+            }            
+            
             weatherLocation.setState(current.getString("state"));
             weatherLocation.setWeather(current.getString("Weather"));
-        } catch (JSONException e) {}
+        } catch (Exception e) {}
 
         return weatherLocation;
     }
-
+    
     @Override
     protected void onPostExecute(WeatherLocation weatherLocation) {
         

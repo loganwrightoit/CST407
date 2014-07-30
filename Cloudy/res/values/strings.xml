@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Cloudy</string>
-    <string name="hello_world">Hello world!</string>
-
+    <string name="search_label">Add Location</string>
+    <string name="search_hint">City and State, or Zipcode</string>
 </resources>

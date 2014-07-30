@@ -4,19 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 public class MainActivity extends Activity implements LocationListener {
 
-    public static Location lastLocation = null;
     public static ListView weatherList = null;
     LocationManager locationManager;
-    private List<WeatherLocation> locationList = new ArrayList<WeatherLocation>();
+    public static List<WeatherLocation> locationList = new ArrayList<WeatherLocation>();
     public static WeatherAdapter adapter = null;
 
     @Override
@@ -24,18 +27,32 @@ public class MainActivity extends Activity implements LocationListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        // MOCK DATA
+        // Default, or "current" location at index 0
         WeatherLocation mockLocation = new WeatherLocation();
         locationList.add(mockLocation);
-        // END MOCK DATA
         
         weatherList = (ListView) findViewById(R.id.weather_list);
         adapter = new WeatherAdapter(this, locationList);
         weatherList.setAdapter(adapter);
-
+        
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-        lastLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.global, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+               (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+
+        return true;
     }
 
     @Override

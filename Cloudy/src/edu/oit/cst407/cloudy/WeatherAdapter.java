@@ -17,21 +17,19 @@ public class WeatherAdapter extends ArrayAdapter<WeatherLocation> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         if( convertView == null ) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.list_item_weatherlocation, parent, false);
         }
-        
-        final View view = convertView;
-                
+   
         ImageButton refreshButton = (ImageButton) convertView.findViewById(R.id.refresh_button);
         
         refreshButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                WeatherTask task = new WeatherTask(view);
-                task.execute(MainActivity.lastLocation);
+                //WeatherTask task = new WeatherTask(v);
+                //task.execute(MainActivity.locationList.get(position).getLocation());
             }
         });
         
