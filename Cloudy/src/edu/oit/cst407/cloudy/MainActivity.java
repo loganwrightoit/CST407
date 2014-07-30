@@ -26,7 +26,7 @@ public class MainActivity extends Activity implements LocationListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
+
         // Default, or "current" location at index 0
         WeatherLocation mockLocation = new WeatherLocation();
         locationList.add(mockLocation);
@@ -38,28 +38,42 @@ public class MainActivity extends Activity implements LocationListener {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.global, menu);
 
-        // Associate searchable configuration with the SearchView
-        SearchManager searchManager =
-               (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
-
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        
         return true;
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        locationManager.removeUpdates(this);
-        WeatherTask weatherTask = new WeatherTask(weatherList.getChildAt(0));
-        weatherTask.execute(location);
+
+        // Ignore inaccurate location updates
+        if (location.getAccuracy() >= 0.68F) {
+            locationManager.removeUpdates(this);
+            WeatherTask weatherTask = new WeatherTask(weatherList.getChildAt(0));
+            weatherTask.execute(location);
+        }
+    }
+    
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        
+        // Save locations
+    }
+    
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        
+        // Restore locations and update adapter dataset
     }
 
     @Override

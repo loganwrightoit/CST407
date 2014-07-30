@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/action_search"
-          android:title="@string/search_label"
+          android:title="@string/add_location"
+          android:titleCondensed="@string/add_location_condensed"
           android:icon="@drawable/ic_action_add_location"
           android:showAsAction="collapseActionView|ifRoom"
           android:actionViewClass="android.widget.SearchView" />

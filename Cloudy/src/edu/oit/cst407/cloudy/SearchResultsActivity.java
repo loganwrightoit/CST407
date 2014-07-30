@@ -9,17 +9,19 @@ import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+import edu.oit.cst407.cloudy.R.id;
 
 public class SearchResultsActivity extends ListActivity {
 
+    private ProgressBar progressBar = null;    
     private ArrayAdapter<LocationResult> adapter = null;
     
     public class LocationResult {
@@ -64,21 +66,10 @@ public class SearchResultsActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_searchable);
-
-        /*
-        String[] values = new String[] {
-                "Android Example ListActivity",
-                "Adapter implementation",
-                "Simple List View With ListActivity",
-                "ListActivity Android",
-                "Android Example",
-                "ListActivity Source Code",
-                "ListView ListActivity Array Adapter",
-                "Android Example ListActivity"
-        };
-        */
-
+        setContentView(R.layout.activity_searchresults);
+        
+        progressBar = (ProgressBar) findViewById(id.loading_bar);
+        
         adapter = new ArrayAdapter<LocationResult>(this, android.R.layout.simple_list_item_1, resultList);
         setListAdapter(adapter); 
         
@@ -102,10 +93,21 @@ public class SearchResultsActivity extends ListActivity {
     protected void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
 
-        //String value = (String) listView.getItemAtPosition(position);      
+        LocationResult locationResult = (LocationResult) listView.getItemAtPosition(position);      
 
-        // Notify mainactivity of added location here.
+        Location location = new Location(LocationManager.PASSIVE_PROVIDER);
+        location.setLatitude(locationResult.getLatitude());
+        location.setLongitude(locationResult.getLongitude());
         
+        MainActivity.locationList.add(new WeatherLocation());
+        MainActivity.adapter.notifyDataSetChanged();
+        int idx = MainActivity.weatherList.getChildCount() - 1;
+        
+        new WeatherTask(MainActivity.weatherList.getChildAt(idx)).execute(location);
+        
+        // Notify mainactivity of added location here.
+        Toast.makeText(getApplicationContext(), String.format("%s, %s added to locations", locationResult.getCity(), locationResult.getState()), Toast.LENGTH_SHORT).show();
+        finish();
     }
     
     public class SearchTask extends AsyncTask<String, Void, JSONObject> {
@@ -117,8 +119,10 @@ public class SearchResultsActivity extends ListActivity {
         
         @Override
         protected void onPostExecute(JSONObject object) {
-            //loading_container.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
             addSearchResults(object);
+            
+            // Notify adapter that list contains new items
             adapter.notifyDataSetChanged();
         }
 
@@ -148,29 +152,29 @@ public class SearchResultsActivity extends ListActivity {
                         
                         JSONArray type = component.getJSONArray("types");
                         for (int idx2 = 0; idx2 < type.length(); ++idx2) {
+                            
                             String typeVal = type.getString(idx2);
                             if ("administrative_area_level_1".equals(typeVal)) {
-                                city = component.getString("long_name");
-                            }
-                            if ("locality".equals(typeVal)) {
                                 state = component.getString("long_name");
                             }
+                            if ("locality".equals(typeVal)) {
+                                city = component.getString("long_name");
+                            }
+                            
                         }
+                        
                     }
 
                     resultList.add(new LocationResult(city, state, lat, lng));
                     
                 }
-
             } else {
                 
-                Log.d("DEBUG", "Search result returned nothing.");
+                Toast.makeText(getApplicationContext(), "No matches found.", Toast.LENGTH_SHORT).show();
+                finish();
                 
-                // Cancel and notify with Toast
             }
-            
-            
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
