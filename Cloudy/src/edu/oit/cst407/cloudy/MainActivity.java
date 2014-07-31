@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity implements LocationListener, IForecastTask {
 
@@ -184,7 +185,9 @@ public class MainActivity extends Activity implements LocationListener, IForecas
                 @Override
                 public void onClick(View v) {
                     list.remove(position);
-                    //adapter.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(getApplicationContext(), "Location removed", Toast.LENGTH_SHORT).show();
+                    saveListState();
                 }
             });
 	        
