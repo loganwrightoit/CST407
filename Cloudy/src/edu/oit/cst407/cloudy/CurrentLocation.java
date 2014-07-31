@@ -2,7 +2,6 @@ package edu.oit.cst407.cloudy;
 
 import java.util.ArrayList;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -15,17 +14,10 @@ public class CurrentLocation implements ILocationTask, IForecastTask {
     }
     
     @Override
-    public void onForecastTaskPreExecute(View view) {
-        // TODO Auto-generated method stub
-        
-    }
+    public void onForecastTaskPreExecute(View view) { }
 
     @Override
-    public void onForecastTaskPostExecute(View view, MetaLocation metaLocation) {
-        
-        
-        
-    }
+    public void onForecastTaskPostExecute(MetaViewLocation[] location) { }
 
     @Override
     public void onLocationTaskPreExecute() {
@@ -49,7 +41,7 @@ public class CurrentLocation implements ILocationTask, IForecastTask {
                 adapter.notifyDataSetChanged();
                 
                 // Fetch forecast for location
-                new ForecastTask(this, view.getChildAt(primaryList.size() - 1)).execute(list.get(0));
+                //new ForecastTask(this, view.getChildAt(primaryList.size() - 1)).execute(list.get(0));
                 
             }
         }

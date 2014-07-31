@@ -94,6 +94,7 @@ public class MainActivity extends Activity implements LocationListener, IForecas
         String locations = prefs.getString("locations", null);
         if (locations != null) {
             list = CloudyUtil.getListFromJsonString(locations);
+            
         }
     }
     
@@ -115,23 +116,30 @@ public class MainActivity extends Activity implements LocationListener, IForecas
 	}
     
 	@Override
-	public void onForecastTaskPostExecute(View view, MetaLocation metaLocation) {
-        RelativeLayout loading_container = (RelativeLayout) view.findViewById(R.id.loading_container);
-        loading_container.setVisibility(View.INVISIBLE);
-        
-        RelativeLayout weather_container = (RelativeLayout) view.findViewById(R.id.weather_container);
-        weather_container.setVisibility(View.VISIBLE);
-        
-        TextView location_text = (TextView) view.findViewById(R.id.location_text);
-        TextView temperature_text = (TextView) view.findViewById(R.id.temperature_text);
-        TextView weather_text = (TextView) view.findViewById(R.id.weather_text);
+	public void onForecastTaskPostExecute(MetaViewLocation[] locations) {
+	    for (MetaViewLocation location : locations) {
+	        
+	        MetaLocation metaLocation = location.getMetaLocation();
+	        View view = location.getView();
+	        
+	        RelativeLayout loading_container = (RelativeLayout) view.findViewById(R.id.loading_container);
+	        loading_container.setVisibility(View.INVISIBLE);
+	        
+	        RelativeLayout weather_container = (RelativeLayout) view.findViewById(R.id.weather_container);
+	        weather_container.setVisibility(View.VISIBLE);
+	        
+	        TextView location_text = (TextView) view.findViewById(R.id.location_text);
+	        TextView temperature_text = (TextView) view.findViewById(R.id.temperature_text);
+	        TextView weather_text = (TextView) view.findViewById(R.id.weather_text);
 
-        location_text.setText(String.format("%s, %s", metaLocation.getCity(), metaLocation.getState()));
-        temperature_text.setText(String.format("%s°", metaLocation.getTemp()));
-        weather_text.setText(metaLocation.getWeather());
+	        location_text.setText(String.format("%s, %s", metaLocation.getCity(), metaLocation.getState()));
+	        temperature_text.setText(String.format("%s°", metaLocation.getTemp()));
+	        weather_text.setText(metaLocation.getWeather());
+	        
+	    }
 	}
 	
-	private class LocationAdapter extends ArrayAdapter<MetaLocation> {
+	public class LocationAdapter extends ArrayAdapter<MetaLocation> {
 
 	    public LocationAdapter(Context context, ArrayList<MetaLocation> objects) {
 	        super(context, 0, objects);
@@ -139,29 +147,46 @@ public class MainActivity extends Activity implements LocationListener, IForecas
 
 	    @Override
 	    public View getView(final int position, View convertView, ViewGroup parent) {
+
+	        final MetaLocation metaLocation = (MetaLocation) listView.getItemAtPosition(position);
 	        
 	        if( convertView == null ) {
 	            LayoutInflater inflater = LayoutInflater.from(getContext());
 	            convertView = inflater.inflate(R.layout.list_item_weatherlocation, parent, false);
+	            
+	            // Refresh data when inflated
+	            final View tempView = convertView;
+	            new ForecastTask(tempView, MainActivity.this).execute(new MetaViewLocation(metaLocation, tempView));
 	        }
 	        
-	        final MetaLocation metaLocation = (MetaLocation) listView.getItemAtPosition(position);
+	        final View tempView = convertView;
 	        
 	        TextView location_text = (TextView) convertView.findViewById(R.id.location_text);
 	        TextView temperature_text = (TextView) convertView.findViewById(R.id.temperature_text);
 	        TextView weather_text = (TextView) convertView.findViewById(R.id.weather_text);
+	        
 	        location_text.setText(String.format("%s, %s", metaLocation.getCity(), metaLocation.getState()));
 	        temperature_text.setText(String.format("%s°", metaLocation.getTemp()));
 	        weather_text.setText(metaLocation.getWeather());
-
+	        
 	        ImageButton refreshButton = (ImageButton) convertView.findViewById(R.id.refresh_button);
 	        
 	        refreshButton.setOnClickListener(new OnClickListener() {
 	            @Override
 	            public void onClick(View v) {
-	                new ForecastTask(MainActivity.this, v).execute(metaLocation);
+	                new ForecastTask(tempView, MainActivity.this).execute(new MetaViewLocation(metaLocation, tempView));
 	            }
 	        });
+	        
+	        ImageButton deleteButton = (ImageButton) convertView.findViewById(R.id.delete_button);
+	        
+	        deleteButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    list.remove(position);
+                    //adapter.notifyDataSetChanged();
+                }
+            });
 	        
 	        return convertView;
 	    }

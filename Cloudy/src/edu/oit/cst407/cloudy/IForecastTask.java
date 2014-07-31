@@ -6,6 +6,6 @@ public interface IForecastTask {
 
     public void onForecastTaskPreExecute(View view);
     
-    public void onForecastTaskPostExecute(View view, MetaLocation metaLocation);
+    public void onForecastTaskPostExecute(MetaViewLocation[] locations);
     
 }

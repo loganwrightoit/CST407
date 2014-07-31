@@ -6,7 +6,6 @@ import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -14,7 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import edu.oit.cst407.cloudy.R.id;
 
-public class SearchResultsActivity extends ListActivity implements ILocationTask, IForecastTask {
+public class SearchResultsActivity extends ListActivity implements ILocationTask {
 
     private ProgressBar progressBar = null;    
     private ArrayAdapter<MetaLocation> adapter = null;
@@ -40,8 +39,9 @@ public class SearchResultsActivity extends ListActivity implements ILocationTask
 
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = String.format("https://maps.googleapis.com/maps/api/geocode/json?address=%s", intent.getStringExtra(SearchManager.QUERY));
-            new LocationTask(this).execute(query);
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            String url = String.format("https://maps.googleapis.com/maps/api/geocode/json?address=%s", query.replace(" ", "+"));
+            new LocationTask(this).execute(url);
         }
     }
 
@@ -50,7 +50,11 @@ public class SearchResultsActivity extends ListActivity implements ILocationTask
         super.onListItemClick(listView, view, position, id);
 
         MetaLocation metaLocation = (MetaLocation) listView.getItemAtPosition(position);
-        new ForecastTask(this, view).execute(metaLocation);
+        MainActivity.getList().add(metaLocation);
+        MainActivity.getAdapter().notifyDataSetChanged();
+        
+        // Close search activity
+        finish(); 
     }
 
 	@Override
@@ -60,7 +64,7 @@ public class SearchResultsActivity extends ListActivity implements ILocationTask
 
 	@Override
 	public void onLocationTaskPostExecute(ArrayList<MetaLocation> inList) {
-		progressBar.setVisibility(View.GONE);
+		progressBar.setVisibility(View.INVISIBLE);
 
 		if (!inList.isEmpty()) {
 
@@ -77,21 +81,5 @@ public class SearchResultsActivity extends ListActivity implements ILocationTask
             finish();
 		}
 	}
-
-    @Override
-    public void onForecastTaskPreExecute(View view) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void onForecastTaskPostExecute(View view, MetaLocation metaLocation) {
-        
-        Log.d("DEBUG", "Adding location with forecast to list.");
-        MainActivity.getList().add(metaLocation);
-        
-        // Close search activity
-        finish();   
-    }
 
 }
