@@ -3,27 +3,19 @@ package edu.oit.cst407.cloudy;
 import org.json.JSONObject;
 
 import android.os.AsyncTask;
-import android.view.View;
 
-public class ForecastTask extends AsyncTask<MetaViewLocation, Void, MetaViewLocation[]> {
+public class ForecastTask extends AsyncTask<MetaLocation, Void, MetaLocation[]> {
 
 	private IForecastTask taskCaller;
-	private View view;
 	    
-    public ForecastTask(View view, IForecastTask taskCaller) {
+    public ForecastTask(IForecastTask taskCaller) {
         this.taskCaller = taskCaller;
-        this.view = view;
-    }
-        
-    @Override
-    protected void onPreExecute() {
-        taskCaller.onForecastTaskPreExecute(view);
     }
 
     @Override
-    protected MetaViewLocation[] doInBackground(MetaViewLocation... params) {
-        for (MetaViewLocation location : params) {
-            MetaLocation metaLocation = location.getMetaLocation();
+    protected MetaLocation[] doInBackground(MetaLocation... params) {
+        for (MetaLocation location : params) {
+        	MetaLocation metaLocation = location;
             String url = String.format("http://forecast.weather.gov/MapClick.php?lat=%s&lon=%s&FcstType=json", metaLocation.getLatitude(), metaLocation.getLongitude());
             JSONObject object = CloudyUtil.getJson(url);
 
@@ -40,7 +32,7 @@ public class ForecastTask extends AsyncTask<MetaViewLocation, Void, MetaViewLoca
     }
     
     @Override
-    protected void onPostExecute(MetaViewLocation[] locations) {
+    protected void onPostExecute(MetaLocation[] locations) {
         taskCaller.onForecastTaskPostExecute(locations);
     }
 

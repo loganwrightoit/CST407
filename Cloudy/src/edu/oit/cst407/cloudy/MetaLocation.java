@@ -1,17 +1,23 @@
 package edu.oit.cst407.cloudy;
 
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MetaLocation {
     
+	private Date date = null;
+	
     private String city = "null";
     private String state = "null";
     private double lat;
     private double lng;
-    private String weather = "Error loading location data.";
-    private int temperature;
-    
+    private String weather = "";
+    private int temp;
+
     public MetaLocation(String city, String state, double lat, double lng) {
         this.city = city;
         this.state = state;
@@ -34,26 +40,45 @@ public class MetaLocation {
     public double getLongitude() {
         return lng;
     }
-    
-    @Override
-    public String toString() {
-        return String.format("%s, %s", city, state);
+
+    public String getWeather() {
+        return this.weather;
     }
 
     public void setWeather(String weather) {
         this.weather = weather;
     }
-    
-    public String getWeather() {
-        return this.weather;
+        
+    public int getTemp() {
+        return temp;
     }
     
     public void setTemp(int temp) {
-        this.temperature = temp;
+        this.temp = temp;
     }
 
-    public int getTemp() {
-        return temperature;
+    public void setDate(Date date) {
+    	this.date = date;
+    }
+    
+    /**
+     * Checks whether the last forecast refresh date is outdated.
+     * @return whether data is outdated
+     */
+	public boolean hasExpired() {
+		if (date != null) {
+			Date currentDate = new Date();
+			long duration  = currentDate.getTime() - date.getTime();
+			long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);			
+			return minutes > 15;
+		} else {
+			return true;
+		}
+	}
+    
+    @Override
+    public String toString() {
+        return String.format("%s, %s", city, state);
     }
 
     @Override
@@ -80,6 +105,14 @@ public class MetaLocation {
             jsonObject.put("state", state);
             jsonObject.put("lat", lat);
             jsonObject.put("lng", lng);
+            jsonObject.put("weather", weather);
+            jsonObject.put("temp", temp);
+
+            if (date != null) {
+	            DateFormat dateFormat = DateFormat.getDateInstance();
+	            jsonObject.put("date", dateFormat.format(date));
+            }
+            
             return jsonObject;
         } catch (JSONException e) {
             e.printStackTrace();

@@ -1,6 +1,8 @@
 package edu.oit.cst407.cloudy;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -12,8 +14,29 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.view.View;
+import android.widget.ListView;
+
 public class CloudyUtil {
 
+	/**
+	 * Returns the associated View for the MetaLocation.
+	 * @param metaLocation  the {@link MetaLocation}
+	 * @return the {@link View}
+	 */
+	public static View getMetaLocationView(MetaLocation metaLocation) {
+		ListView listView = MainActivity.getListView();
+		
+		for (int idx = 0; idx < listView.getCount(); ++idx) {
+			MetaLocation tempLocation = (MetaLocation) listView.getItemAtPosition(idx);
+			if (tempLocation.equals(metaLocation)) {
+				return listView.getChildAt(idx);
+			}
+		}
+		
+		return null;
+	}
+	
     public static JSONObject getJson(String url) {
         try {
             HttpClient httpclient = new DefaultHttpClient();
@@ -56,8 +79,20 @@ public class CloudyUtil {
                 String state = location.getString("state");
                 double lat = location.getDouble("lat");
                 double lng = location.getDouble("lng");
+                String weather = location.getString("weather");
+                int temp = location.getInt("temp");
 
-                list.add(new MetaLocation(city, state, lat, lng));
+                MetaLocation metaLocation = new MetaLocation(city, state, lat, lng);
+                metaLocation.setWeather(weather);
+                metaLocation.setTemp(temp);
+                
+                if (location.has("date")) {
+	                DateFormat dateFormat = DateFormat.getDateInstance();
+	                Date date = dateFormat.parse(location.getString("date"));
+	                metaLocation.setDate(date);
+                }                
+
+                list.add(metaLocation);
             }
             
         } catch (Exception e) {

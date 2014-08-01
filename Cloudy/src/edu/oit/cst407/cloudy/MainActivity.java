@@ -37,7 +37,7 @@ public class MainActivity extends Activity implements LocationListener, IForecas
         setContentView(R.layout.activity_main);
 
         restoreListState();
-        
+
         listView = (ListView) findViewById(R.id.weather_list);
         adapter = new LocationAdapter(this, list);
         listView.setAdapter(adapter);
@@ -74,7 +74,8 @@ public class MainActivity extends Activity implements LocationListener, IForecas
     public void onLocationChanged(Location location) {
         if (location.getAccuracy() >= 0.68F) {
             locationManager.removeUpdates(this);
-            //new CurrentLocation().find(location.getLatitude(), location.getLongitude());
+            // Add current location to list if not there already
+            new CurrentLocation().find(location.getLatitude(), location.getLongitude());
         }
     }
 
@@ -95,7 +96,6 @@ public class MainActivity extends Activity implements LocationListener, IForecas
         String locations = prefs.getString("locations", null);
         if (locations != null) {
             list = CloudyUtil.getListFromJsonString(locations);
-            
         }
     }
     
@@ -109,21 +109,21 @@ public class MainActivity extends Activity implements LocationListener, IForecas
     public void onStatusChanged(String provider, int status, Bundle extras) {}
 
 	@Override
-	public void onForecastTaskPreExecute(View view) {
-        RelativeLayout loading_container = (RelativeLayout) view.findViewById(R.id.loading_container);
-        RelativeLayout weather_container = (RelativeLayout) view.findViewById(R.id.weather_container);    
-        weather_container.setVisibility(View.INVISIBLE);
-        loading_container.setVisibility(View.VISIBLE);
+	public void onForecastTaskPostExecute(MetaLocation[] locations) {
+	    for (MetaLocation location : locations) { 
+	        metaLocationPostRefresh(location);	        
+	    }
 	}
-    
-	@Override
-	public void onForecastTaskPostExecute(MetaViewLocation[] locations) {
-	    for (MetaViewLocation location : locations) {
-	        
-	        MetaLocation metaLocation = location.getMetaLocation();
-	        View view = location.getView();
-	        
-	        RelativeLayout loading_container = (RelativeLayout) view.findViewById(R.id.loading_container);
+	
+	/**
+	 * Used to populate MetaLocation fields in view after a refresh, or at creation.
+	 * @param metaLocation
+	 */
+	private void metaLocationPostRefresh(MetaLocation metaLocation) {
+		View view = CloudyUtil.getMetaLocationView(metaLocation);
+		
+		if (view != null) {
+			RelativeLayout loading_container = (RelativeLayout) view.findViewById(R.id.loading_container);
 	        loading_container.setVisibility(View.INVISIBLE);
 	        
 	        RelativeLayout weather_container = (RelativeLayout) view.findViewById(R.id.weather_container);
@@ -132,14 +132,24 @@ public class MainActivity extends Activity implements LocationListener, IForecas
 	        TextView location_text = (TextView) view.findViewById(R.id.location_text);
 	        TextView temperature_text = (TextView) view.findViewById(R.id.temperature_text);
 	        TextView weather_text = (TextView) view.findViewById(R.id.weather_text);
-
+	
 	        location_text.setText(String.format("%s, %s", metaLocation.getCity(), metaLocation.getState()));
 	        temperature_text.setText(String.format("%s°", metaLocation.getTemp()));
 	        weather_text.setText(metaLocation.getWeather());
-	        
-	    }
+		}
 	}
 	
+	private void metaLocationPreRefresh(MetaLocation metaLocation) {
+		View view = CloudyUtil.getMetaLocationView(metaLocation);
+		
+		if (view != null) {
+	        RelativeLayout loading_container = (RelativeLayout) view.findViewById(R.id.loading_container);
+	        RelativeLayout weather_container = (RelativeLayout) view.findViewById(R.id.weather_container);    
+	        weather_container.setVisibility(View.INVISIBLE);
+	        loading_container.setVisibility(View.VISIBLE);
+		}
+	}
+
 	public class LocationAdapter extends ArrayAdapter<MetaLocation> {
 
 	    public LocationAdapter(Context context, ArrayList<MetaLocation> objects) {
@@ -147,47 +157,42 @@ public class MainActivity extends Activity implements LocationListener, IForecas
 	    }
 
 	    @Override
-	    public View getView(final int position, View convertView, ViewGroup parent) {
+	    public View getView(int position, View convertView, ViewGroup parent) {
 
 	        final MetaLocation metaLocation = (MetaLocation) listView.getItemAtPosition(position);
-	        
+
 	        if( convertView == null ) {
 	            LayoutInflater inflater = LayoutInflater.from(getContext());
 	            convertView = inflater.inflate(R.layout.list_item_weatherlocation, parent, false);
-	            
-	            // Refresh data when inflated
-	            final View tempView = convertView;
-	            new ForecastTask(tempView, MainActivity.this).execute(new MetaViewLocation(metaLocation, tempView));
 	        }
 	        
-	        final View tempView = convertView;
-	        
-	        TextView location_text = (TextView) convertView.findViewById(R.id.location_text);
-	        TextView temperature_text = (TextView) convertView.findViewById(R.id.temperature_text);
-	        TextView weather_text = (TextView) convertView.findViewById(R.id.weather_text);
-	        
-	        location_text.setText(String.format("%s, %s", metaLocation.getCity(), metaLocation.getState()));
-	        temperature_text.setText(String.format("%s°", metaLocation.getTemp()));
-	        weather_text.setText(metaLocation.getWeather());
+	        // Refresh weather data if outdated or hasn't been checked yet.
+	        if (metaLocation.hasExpired()) {
+	            new ForecastTask(MainActivity.this).execute(metaLocation);
+            }
+
+	        metaLocationPostRefresh(metaLocation);
 	        
 	        ImageButton refreshButton = (ImageButton) convertView.findViewById(R.id.refresh_button);
 	        
 	        refreshButton.setOnClickListener(new OnClickListener() {
 	            @Override
 	            public void onClick(View v) {
-	                new ForecastTask(tempView, MainActivity.this).execute(new MetaViewLocation(metaLocation, tempView));
+	            	metaLocationPreRefresh(metaLocation);
+	            	new ForecastTask(MainActivity.this).execute(metaLocation);
 	            }
 	        });
 	        
 	        ImageButton deleteButton = (ImageButton) convertView.findViewById(R.id.delete_button);
+	        final int pos = position;
 	        
 	        deleteButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    list.remove(position);
+                    list.remove(pos);
+                    saveListState();
                     adapter.notifyDataSetChanged();
                     Toast.makeText(getApplicationContext(), "Location removed", Toast.LENGTH_SHORT).show();
-                    saveListState();
                 }
             });
 	        

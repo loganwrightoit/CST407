@@ -58,18 +58,13 @@ public class SearchResultsActivity extends ListActivity implements ILocationTask
     }
 
 	@Override
-	public void onLocationTaskPreExecute() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onLocationTaskPostExecute(ArrayList<MetaLocation> inList) {
+	public void onLocationTaskPostExecute(MetaLocation[] locations) {
 		progressBar.setVisibility(View.INVISIBLE);
 
-		if (!inList.isEmpty()) {
+		if (locations.length > 0) {
 
     		// Add locations to list, disable if already exists
-    		for (MetaLocation location : inList) {
+    		for (MetaLocation location : locations) {
     		    list.add(0, location);
     		}
             

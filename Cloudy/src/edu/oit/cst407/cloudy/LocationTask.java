@@ -1,13 +1,14 @@
 package edu.oit.cst407.cloudy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.os.AsyncTask;
 
-public class LocationTask extends AsyncTask<String, Void, ArrayList<MetaLocation>> {
+public class LocationTask extends AsyncTask<String, Void, MetaLocation[]> {
 
 	ILocationTask taskCaller;
 	
@@ -16,7 +17,7 @@ public class LocationTask extends AsyncTask<String, Void, ArrayList<MetaLocation
 	}
 	
     @Override
-    protected ArrayList<MetaLocation> doInBackground(String... params) {
+    protected MetaLocation[] doInBackground(String... params) {
         JSONObject object = CloudyUtil.getJson(params[0]);
         ArrayList<MetaLocation> list = new ArrayList<MetaLocation>();
         
@@ -70,12 +71,15 @@ public class LocationTask extends AsyncTask<String, Void, ArrayList<MetaLocation
             e.printStackTrace();
         }
     
-        return list;
+        Object[] objectArray = list.toArray();
+        MetaLocation[] locations = Arrays.copyOf(objectArray, objectArray.length, MetaLocation[].class);
+        
+        return locations;
     }
     
     @Override
-    protected void onPostExecute(ArrayList<MetaLocation> list) {
-    	taskCaller.onLocationTaskPostExecute(list);
+    protected void onPostExecute(MetaLocation[] locations) {
+    	taskCaller.onLocationTaskPostExecute(locations);
     }
 
 }

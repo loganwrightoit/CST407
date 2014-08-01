@@ -4,45 +4,29 @@ import java.util.ArrayList;
 
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
-public class CurrentLocation implements ILocationTask, IForecastTask {
+public class CurrentLocation implements ILocationTask {
 
     public void find(double lat, double lng) {
         String query = String.format("https://maps.googleapis.com/maps/api/geocode/json?latlng=%s,%s", lat, lng);
         new LocationTask(this).execute(query);
     }
-    
-    @Override
-    public void onForecastTaskPreExecute(View view) { }
 
     @Override
-    public void onForecastTaskPostExecute(MetaViewLocation[] location) { }
-
-    @Override
-    public void onLocationTaskPreExecute() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void onLocationTaskPostExecute(ArrayList<MetaLocation> list) {
-        if (!list.isEmpty()) {
+    public void onLocationTaskPostExecute(MetaLocation[] location) {
+        if (location.length > 0) {
             ArrayList<MetaLocation> primaryList = MainActivity.getList();
             ArrayAdapter<MetaLocation> adapter = MainActivity.getAdapter();
-            ListView view = MainActivity.getListView();
-    
-            // Check if mainactivity list contains location
-            
-            if (!primaryList.contains(list.get(0))) {
-                
-                // Add location to list
-                primaryList.add(list.get(0));
+            MetaLocation metaLocation = location[0];
+
+            // Add current location to list if it doesn't already exist
+            if (!primaryList.contains(metaLocation)) {
+                primaryList.add(metaLocation);
                 adapter.notifyDataSetChanged();
-                
-                // Fetch forecast for location
-                //new ForecastTask(this, view.getChildAt(primaryList.size() - 1)).execute(list.get(0));
-                
+            } else {
+            	// Set listview for location as "Current" with a different color
+            	View view = CloudyUtil.getMetaLocationView(metaLocation);
+            	
             }
         }
     }
