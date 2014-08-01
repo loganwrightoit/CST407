@@ -5,4 +5,7 @@
     <string name="add_location">Add Location</string>
     <string name="add_location_condensed">Add</string>
     <string name="add_location_hint">City and State, or Zipcode</string>
+    <string name="refresh_location">Refresh Location</string>
+    <string name="delete_location">Delete Location</string>
+    <string name="current_location">Current Location</string>
 </resources>

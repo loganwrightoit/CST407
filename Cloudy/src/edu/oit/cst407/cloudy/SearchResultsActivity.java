@@ -49,12 +49,20 @@ public class SearchResultsActivity extends ListActivity implements ILocationTask
     protected void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
 
+        ArrayList<MetaLocation> primaryList = MainActivity.getList();
+        ArrayAdapter<MetaLocation> adapter = MainActivity.getAdapter();
         MetaLocation metaLocation = (MetaLocation) listView.getItemAtPosition(position);
-        MainActivity.getList().add(metaLocation);
-        MainActivity.getAdapter().notifyDataSetChanged();
         
-        // Close search activity
-        finish(); 
+        if (primaryList.contains(metaLocation)) {
+            Toast.makeText(getApplicationContext(), "This location is already added.", Toast.LENGTH_SHORT).show();
+            view.setEnabled(false);
+        } else {
+        	primaryList.add(metaLocation);
+        	adapter.notifyDataSetChanged();
+        	
+        	// Close search activity
+            finish();
+        }
     }
 
 	@Override

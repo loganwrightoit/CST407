@@ -18,6 +18,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
@@ -99,15 +100,6 @@ public class MainActivity extends Activity implements LocationListener, IForecas
         }
     }
     
-    @Override
-    public void onProviderDisabled(String provider) {}
-
-    @Override
-    public void onProviderEnabled(String provider) {}
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {}
-
 	@Override
 	public void onForecastTaskPostExecute(MetaLocation[] locations) {
 	    for (MetaLocation location : locations) { 
@@ -136,6 +128,15 @@ public class MainActivity extends Activity implements LocationListener, IForecas
 	        location_text.setText(String.format("%s, %s", metaLocation.getCity(), metaLocation.getState()));
 	        temperature_text.setText(String.format("%s°", metaLocation.getTemp()));
 	        weather_text.setText(metaLocation.getWeather());
+	        
+	        MetaLocation currentLocation = CurrentLocation.currentLocation;
+	        ImageView currentLocation_image = (ImageView) view.findViewById(R.id.current_location_image);
+	        if (currentLocation != null && currentLocation.equals(metaLocation)) {
+	        	currentLocation_image.setVisibility(View.VISIBLE);
+	        } else {
+	        	currentLocation_image.setVisibility(View.INVISIBLE);
+	        }
+	        
 		}
 	}
 	
@@ -200,5 +201,14 @@ public class MainActivity extends Activity implements LocationListener, IForecas
 	    }
 
 	}
+	
+    @Override
+    public void onProviderDisabled(String provider) {}
+
+    @Override
+    public void onProviderEnabled(String provider) {}
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {}
 
 }
