@@ -70,10 +70,10 @@ public class LocationTask extends AsyncTask<String, Void, MetaLocation[]> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    
+
         Object[] objectArray = list.toArray();
         MetaLocation[] locations = Arrays.copyOf(objectArray, objectArray.length, MetaLocation[].class);
-        
+
         return locations;
     }
     

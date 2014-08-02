@@ -1,5 +1,10 @@
 package edu.oit.cst407.cloudy;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import org.json.JSONObject;
 
 import android.os.AsyncTask;
@@ -20,6 +25,11 @@ public class ForecastTask extends AsyncTask<MetaLocation, Void, MetaLocation[]> 
             JSONObject object = CloudyUtil.getJson(url);
 
             try {
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", Locale.US);
+                
+                Date date = dateFormat.parse(object.getString("creationDate"));
+                metaLocation.setCreationDate(date);
+
                 JSONObject current = object.getJSONObject("currentobservation");
                 metaLocation.setWeather(current.getString("Weather"));
                 metaLocation.setTemp(current.getInt("Temp"));

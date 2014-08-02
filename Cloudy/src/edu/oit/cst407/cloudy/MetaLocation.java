@@ -2,7 +2,6 @@ package edu.oit.cst407.cloudy;
 
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,7 +56,7 @@ public class MetaLocation {
         this.temp = temp;
     }
 
-    public void setDate(Date date) {
+    public void setCreationDate(Date date) {
     	this.date = date;
     }
     
@@ -67,10 +66,11 @@ public class MetaLocation {
      */
 	public boolean hasExpired() {
 		if (date != null) {
-			Date currentDate = new Date();
-			long duration  = currentDate.getTime() - date.getTime();
-			long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);			
-			return minutes > 15;
+		    return true;
+			//Date currentDate = new Date();
+			//long duration  = currentDate.getTime() - date.getTime();
+			//long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);			
+			//return minutes > 15;
 		} else {
 			return true;
 		}

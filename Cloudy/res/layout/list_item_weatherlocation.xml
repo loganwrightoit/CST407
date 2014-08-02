@@ -80,21 +80,23 @@
         android:visibility="invisible" >
 
         <ProgressBar
-            android:id="@+id/loading_bar"
+            android:id="@+id/ProgressBar00"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true" />
 
         <TextView
-            android:id="@+id/select_a_location"
+            android:id="@+id/loading_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/loading_bar"
+            android:layout_toLeftOf="@+id/ProgressBar00"
+            android:minWidth="50dp"
             android:text="@string/refreshing_location"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/white" />
+
     </RelativeLayout>
 
 </RelativeLayout>

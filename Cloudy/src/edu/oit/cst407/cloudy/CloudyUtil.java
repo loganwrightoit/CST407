@@ -14,28 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.view.View;
-import android.widget.ListView;
-
 public class CloudyUtil {
-
-	/**
-	 * Returns the associated View for the MetaLocation.
-	 * @param metaLocation  the {@link MetaLocation}
-	 * @return the {@link View}
-	 */
-	public static View getMetaLocationView(MetaLocation metaLocation) {
-		ListView listView = MainActivity.getListView();
-		
-		for (int idx = 0; idx < listView.getCount(); ++idx) {
-			MetaLocation tempLocation = (MetaLocation) listView.getItemAtPosition(idx);
-			if (tempLocation.equals(metaLocation)) {
-				return listView.getChildAt(idx);
-			}
-		}
-		
-		return null;
-	}
 	
     public static JSONObject getJson(String url) {
         try {
@@ -89,7 +68,7 @@ public class CloudyUtil {
                 if (location.has("date")) {
 	                DateFormat dateFormat = DateFormat.getDateInstance();
 	                Date date = dateFormat.parse(location.getString("date"));
-	                metaLocation.setDate(date);
+	                metaLocation.setCreationDate(date);
                 }                
 
                 list.add(metaLocation);

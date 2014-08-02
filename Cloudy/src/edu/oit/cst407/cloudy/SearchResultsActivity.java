@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -24,7 +25,7 @@ public class SearchResultsActivity extends ListActivity implements ILocationTask
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_searchresults);
         
-        progressBar = (ProgressBar) findViewById(id.loading_bar);
+        progressBar = (ProgressBar) findViewById(id.ProgressBar00);
         adapter = new ArrayAdapter<MetaLocation>(this, android.R.layout.simple_list_item_1, list);
         setListAdapter(adapter); 
         
@@ -41,7 +42,7 @@ public class SearchResultsActivity extends ListActivity implements ILocationTask
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             String url = String.format("https://maps.googleapis.com/maps/api/geocode/json?address=%s", query.replace(" ", "+"));
-            new LocationTask(this).execute(url);
+            new LocationTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
         }
     }
 
@@ -49,16 +50,14 @@ public class SearchResultsActivity extends ListActivity implements ILocationTask
     protected void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
 
-        ArrayList<MetaLocation> primaryList = MainActivity.getList();
-        ArrayAdapter<MetaLocation> adapter = MainActivity.getAdapter();
+        LocationAdapter adapter = MainActivity.getAdapter();
         MetaLocation metaLocation = (MetaLocation) listView.getItemAtPosition(position);
         
-        if (primaryList.contains(metaLocation)) {
+        if (adapter.getList().contains(metaLocation)) {
             Toast.makeText(getApplicationContext(), "This location is already added.", Toast.LENGTH_SHORT).show();
             view.setEnabled(false);
         } else {
-        	primaryList.add(metaLocation);
-        	adapter.notifyDataSetChanged();
+        	adapter.add(metaLocation);
         	
         	// Close search activity
             finish();
