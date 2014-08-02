@@ -54,9 +54,10 @@ public class SearchResultsActivity extends ListActivity implements ILocationTask
         MetaLocation metaLocation = (MetaLocation) listView.getItemAtPosition(position);
         
         if (adapter.getList().contains(metaLocation)) {
-            Toast.makeText(getApplicationContext(), "This location is already added.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), String.format("%s, %s is already in list.", metaLocation.getCity(), metaLocation.getState()), Toast.LENGTH_SHORT).show();
             view.setEnabled(false);
         } else {
+            Toast.makeText(getApplicationContext(), String.format("Added %s, %s to list.", metaLocation.getCity(), metaLocation.getState()), Toast.LENGTH_SHORT).show();
         	adapter.add(metaLocation);
         	
         	// Close search activity
