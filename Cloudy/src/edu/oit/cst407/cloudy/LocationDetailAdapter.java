@@ -13,10 +13,18 @@ public class LocationDetailAdapter extends ArrayAdapter<MetaLocation> {
 
     private LayoutInflater inflater;
     private MetaLocation metaLocation;
+    private String[] period;
+    private String[] periodWeather;
 
     public LocationDetailAdapter(Context context, ArrayList<MetaLocation> list) {
         super(context, 0, list);
         metaLocation = list.get(0);
+        
+        try {
+            period = metaLocation.getWeatherPeriods();
+            periodWeather = metaLocation.getWeatherPeriodConditions();
+        } catch (Exception e) {}
+        
         inflater = LayoutInflater.from(getContext());
     }
     
@@ -36,8 +44,8 @@ public class LocationDetailAdapter extends ArrayAdapter<MetaLocation> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        //holder.period_text.setText(metaLocation.getExtStartPeriodName(position));
-        //holder.period_conditions_text.setText(metaLocation.getExtText(position));
+        holder.period_text.setText(period[position]);
+        holder.period_conditions_text.setText(periodWeather[position]);
 
         return convertView;
     }
