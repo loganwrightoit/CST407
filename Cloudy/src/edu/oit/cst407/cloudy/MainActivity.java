@@ -20,7 +20,7 @@ public class MainActivity extends ListActivity implements LocationListener {
 
     private LocationManager locationManager = null;
     private static LocationAdapter adapter = null;
-    
+
     public final static String KEY_DETAIL = "DETAIL";
 
     @Override
@@ -34,13 +34,13 @@ public class MainActivity extends ListActivity implements LocationListener {
         String locations = prefs.getString("locations", "");
         adapter = new LocationAdapter(this, CloudyUtil.getListFromJsonString(locations));
         setListAdapter(adapter);
-        
+
         /* Start listening to obtain current location */
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
     }
-    
+
     @Override
     /**
      * This method will be called when an item in the list is selected.
@@ -62,7 +62,7 @@ public class MainActivity extends ListActivity implements LocationListener {
     public static LocationAdapter getAdapter() {
         return adapter;
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -71,7 +71,7 @@ public class MainActivity extends ListActivity implements LocationListener {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        
+
         return true;
     }
 
@@ -89,7 +89,7 @@ public class MainActivity extends ListActivity implements LocationListener {
         super.onSaveInstanceState(outState);
         saveState(this);
     }
-    
+
     /**
      * Save the contents of the location list.
      * @param context
@@ -98,7 +98,7 @@ public class MainActivity extends ListActivity implements LocationListener {
         Activity activity = (Activity) context;
         SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("locations", CloudyUtil.getListAsJsonString(adapter.objects));
+        editor.putString("locations", CloudyUtil.getListAsJsonString("locations", adapter.objects));
         editor.apply();
     }
 

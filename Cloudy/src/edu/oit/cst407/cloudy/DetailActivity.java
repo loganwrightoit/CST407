@@ -1,16 +1,19 @@
 package edu.oit.cst407.cloudy;
 
-import android.app.Activity;
+import java.util.ArrayList;
+
+import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
-public class DetailActivity extends Activity {
+public class DetailActivity extends ListActivity {
 
     public final static String KEY_POSITION = "POSITION";
     
+    private LocationDetailAdapter adapter = null;
     private MetaLocation metaLocation = null;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,17 +23,28 @@ public class DetailActivity extends Activity {
 
         TextView detail_location_text = (TextView) findViewById(R.id.detail_location_text);
         TextView detail_temperature_text = (TextView) findViewById(R.id.detail_temperature_text);
-        TextView detail_weather_text = (TextView) findViewById(R.id.detail_weather_text);
+        TextView detail_weather_current_text = (TextView) findViewById(R.id.detail_weather_current_text);
         
         detail_location_text.setText(String.format("%s, %s", metaLocation.getCity(), metaLocation.getState()));
-        detail_temperature_text.setText(String.format("%s°", metaLocation.getTemp()));
-        detail_weather_text.setText("Weather Conditions");
+        
+        try {
+            detail_temperature_text.setText(String.format("%s°", metaLocation.getCurrentTemperature()));
+        } catch (Exception e) {}
+        
+        detail_weather_current_text.setText("Weather Conditions");
+
+        ArrayList<MetaLocation> list = new ArrayList<MetaLocation>();
+        for (int count = 0; count < 13; ++count) {
+            list.add(metaLocation);
+        }
+        adapter = new LocationDetailAdapter(this, list);
+        setListAdapter(adapter);
     }
-    
+
     private void handleIntent(Intent intent) {
         int position = Integer.parseInt(intent.getStringExtra(KEY_POSITION));
         LocationAdapter adapter = MainActivity.getAdapter();
         metaLocation = adapter.getItem(position);
     }
-    
+
 }

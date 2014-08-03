@@ -22,7 +22,7 @@
             android:value=".SearchResultsActivity" />
 
         <activity
-            android:name=".MainActivity"
+            android:name="edu.oit.cst407.cloudy.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,11 +31,11 @@
         </activity>
         
         <activity
-            android:name=".DetailActivity" >
+            android:name="edu.oit.cst407.cloudy.DetailActivity" >
 	    </activity>
         
         <activity
-            android:name=".SearchResultsActivity"
+            android:name="edu.oit.cst407.cloudy.SearchResultsActivity"
             android:launchMode="singleTop" >
 	        <intent-filter>
 		        <action android:name="android.intent.action.SEARCH" />

@@ -16,19 +16,19 @@ import edu.oit.cst407.cloudy.R.id;
 
 public class SearchResultsActivity extends ListActivity implements ILocationTask {
 
-    private ProgressBar progressBar = null;    
+    private ProgressBar progressBar = null;
     private ArrayAdapter<MetaLocation> adapter = null;
     private ArrayList<MetaLocation> list = new ArrayList<MetaLocation>();
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_searchresults);
-        
+        setContentView(R.layout.activity_search_results);
+
         progressBar = (ProgressBar) findViewById(id.ProgressBar00);
         adapter = new ArrayAdapter<MetaLocation>(this, android.R.layout.simple_list_item_1, list);
-        setListAdapter(adapter); 
-        
+        setListAdapter(adapter);
+
         handleIntent(getIntent());
     }
 
@@ -52,37 +52,37 @@ public class SearchResultsActivity extends ListActivity implements ILocationTask
 
         LocationAdapter adapter = MainActivity.getAdapter();
         MetaLocation metaLocation = (MetaLocation) listView.getItemAtPosition(position);
-        
+
         if (adapter.getList().contains(metaLocation)) {
             Toast.makeText(getApplicationContext(), String.format("%s, %s is already in list.", metaLocation.getCity(), metaLocation.getState()), Toast.LENGTH_SHORT).show();
             view.setEnabled(false);
         } else {
             Toast.makeText(getApplicationContext(), String.format("Added %s, %s to list.", metaLocation.getCity(), metaLocation.getState()), Toast.LENGTH_SHORT).show();
-        	adapter.add(metaLocation);
-        	
-        	// Close search activity
+            adapter.add(metaLocation);
+
+            // Close search activity
             finish();
         }
     }
 
-	@Override
-	public void onLocationTaskPostExecute(MetaLocation[] locations) {
-		progressBar.setVisibility(View.INVISIBLE);
+    @Override
+    public void onLocationTaskPostExecute(MetaLocation[] locations) {
+        progressBar.setVisibility(View.INVISIBLE);
 
-		if (locations.length > 0) {
+        if (locations.length > 0) {
 
-    		// Add locations to list, disable if already exists
-    		for (MetaLocation location : locations) {
-    		    list.add(0, location);
-    		}
-            
+            // Add locations to list, disable if already exists
+            for (MetaLocation location : locations) {
+                list.add(0, location);
+            }
+
             // Notify adapter that list contains new items
             adapter.notifyDataSetChanged();
-            
-		} else {
-		    Toast.makeText(getApplicationContext(), "No matches found.", Toast.LENGTH_SHORT).show();
+
+        } else {
+            Toast.makeText(getApplicationContext(), "No matches found.", Toast.LENGTH_SHORT).show();
             finish();
-		}
-	}
+        }
+    }
 
 }

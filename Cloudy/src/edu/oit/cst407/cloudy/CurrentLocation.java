@@ -4,8 +4,8 @@ import android.os.AsyncTask;
 
 public class CurrentLocation implements ILocationTask {
 
-	public static MetaLocation currentLocation;
-	
+    public static MetaLocation currentLocation;
+
     public void find(double lat, double lng) {
         String query = String.format("https://maps.googleapis.com/maps/api/geocode/json?latlng=%s,%s", lat, lng);
         new LocationTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, query);
