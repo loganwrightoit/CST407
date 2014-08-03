@@ -29,9 +29,8 @@ public class DetailActivity extends ListActivity {
         
         try {
             detail_temperature_text.setText(String.format("%s°", metaLocation.getCurrentTemperature()));
+            detail_weather_current_text.setText(metaLocation.getCurrentWeather());
         } catch (Exception e) {}
-        
-        detail_weather_current_text.setText("Weather Conditions");
 
         ArrayList<MetaLocation> list = new ArrayList<MetaLocation>();
         for (int count = 0; count < 13; ++count) {

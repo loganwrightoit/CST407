@@ -12,13 +12,12 @@ import android.widget.TextView;
 public class LocationDetailAdapter extends ArrayAdapter<MetaLocation> {
 
     private LayoutInflater inflater;
-    private MetaLocation metaLocation;
     private String[] period;
     private String[] periodWeather;
 
     public LocationDetailAdapter(Context context, ArrayList<MetaLocation> list) {
         super(context, 0, list);
-        metaLocation = list.get(0);
+        MetaLocation metaLocation = list.get(0);
         
         try {
             period = metaLocation.getWeatherPeriods();
@@ -51,6 +50,7 @@ public class LocationDetailAdapter extends ArrayAdapter<MetaLocation> {
     }
 
     static class ViewHolder {
+        TextView detail_weather_current_text;
         TextView period_text;
         TextView period_conditions_text;
     }
