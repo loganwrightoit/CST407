@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
@@ -11,12 +12,16 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.SearchView;
 
 public class MainActivity extends ListActivity implements LocationListener {
 
     private LocationManager locationManager = null;
     private static LocationAdapter adapter = null;
+    
+    public final static String KEY_DETAIL = "DETAIL";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +39,24 @@ public class MainActivity extends ListActivity implements LocationListener {
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+    }
+    
+    @Override
+    /**
+     * This method will be called when an item in the list is selected.
+     * Subclasses should override. Subclasses can call
+     * getListView().getItemAtPosition(position) if they need to access the
+     * data associated with the selected item.
+     *
+     * @param l The ListView where the click happened
+     * @param v The view that was clicked within the ListView
+     * @param position The position of the view in the list
+     * @param id The row id of the item that was clicked
+     */
+    protected void onListItemClick(ListView listView, View view, int position, long id) {
+        Intent launchDetail = new Intent(MainActivity.this, DetailActivity.class);
+        launchDetail.putExtra(DetailActivity.KEY_POSITION, Integer.toString(position));
+        startActivityForResult(launchDetail, 0);
     }
 
     public static LocationAdapter getAdapter() {

@@ -31,6 +31,10 @@
         </activity>
         
         <activity
+            android:name=".DetailActivity" >
+	    </activity>
+        
+        <activity
             android:name=".SearchResultsActivity"
             android:launchMode="singleTop" >
 	        <intent-filter>

@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/black"
+    android:descendantFocusability="blocksDescendants"
     android:padding="10dp" >
 
     <RelativeLayout
@@ -14,7 +15,7 @@
         android:visibility="invisible" >
 
         <TextView
-            android:id="@+id/location_text"
+            android:id="@+id/detail_location_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -26,8 +27,8 @@
             android:id="@+id/current_location_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/location_text"
-            android:contentDescription="@string/current_location"
+            android:layout_toRightOf="@+id/detail_location_text"
+            android:contentDescription="@string/main_current_location"
             android:src="@drawable/ic_current_location"
             android:visibility="invisible" />
 
@@ -36,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/location_text"
+            android:layout_below="@+id/detail_location_text"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/white" />
 
@@ -55,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:contentDescription="@string/refresh_location"
+            android:contentDescription="@string/main_refresh_location"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_action_refresh_location" />
 
@@ -64,7 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:contentDescription="@string/delete_location"
+            android:contentDescription="@string/main_delete_location"
             android:layout_below="@+id/refresh_button"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_action_delete_location" />
@@ -93,7 +94,7 @@
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/ProgressBar00"
             android:minWidth="50dp"
-            android:text="@string/refreshing_location"
+            android:text="@string/main_refreshing_location"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/white" />
 

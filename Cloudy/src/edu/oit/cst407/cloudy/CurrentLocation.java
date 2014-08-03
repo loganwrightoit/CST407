@@ -20,10 +20,14 @@ public class CurrentLocation implements ILocationTask {
             // Add current location to list if it doesn't already exist
             if (!adapter.getList().contains(metaLocation)) {
                 adapter.add(metaLocation);
+            } else {
+                /*
+                 * If location already exists on list, we need to refresh
+                 * the list so that the pinpoint icon is placed next to your
+                 * current location.  This just guarantees it happens quickly.
+                 */
+                adapter.notifyDataSetChanged();
             }
-            
-            // We want the list to refresh since current location will change attributes
-            adapter.notifyDataSetChanged();
         }
     }
 

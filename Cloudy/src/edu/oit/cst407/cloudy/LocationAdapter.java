@@ -64,7 +64,7 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> implements IFore
             holder.loading_container = (RelativeLayout) convertView.findViewById(R.id.loading_container);
             holder.loading_text = (TextView) convertView.findViewById(R.id.loading_text);
             holder.weather_container = (RelativeLayout) convertView.findViewById(R.id.weather_container);
-            holder.location_text = (TextView) convertView.findViewById(R.id.location_text);
+            holder.location_text = (TextView) convertView.findViewById(R.id.detail_location_text);
             holder.temperature_text = (TextView) convertView.findViewById(R.id.temperature_text);
             holder.weather_text = (TextView) convertView.findViewById(R.id.weather_text);
             holder.currentLocation_image = (ImageView) convertView.findViewById(R.id.current_location_image);
@@ -94,6 +94,8 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> implements IFore
             holder.location_text.setText(String.format("%s, %s", metaLocation.getCity(), metaLocation.getState()));
             holder.temperature_text.setText(String.format("%s°", metaLocation.getTemp()));
             holder.weather_text.setText(metaLocation.getWeather());
+            
+            /* Add pinpoint icon next to location if it's your current location. */
             
             MetaLocation currentLocation = CurrentLocation.currentLocation;
             if (currentLocation != null && currentLocation.equals(metaLocation)) {
@@ -147,7 +149,7 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> implements IFore
     public void getForecast(ViewHolderItem holder, MetaLocation location) {
         holder.weather_container.setVisibility(View.INVISIBLE);
         holder.loading_container.setVisibility(View.VISIBLE);
-        holder.loading_text.setText(R.string.refreshing_location);
+        holder.loading_text.setText(R.string.main_refreshing_location);
         taskList.add(location);
         new ForecastTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, location);
     }

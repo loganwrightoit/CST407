@@ -16,7 +16,7 @@
             android:background="@android:color/holo_blue_dark"
             android:gravity="center_horizontal"
             android:padding="10dp"
-            android:text="@string/select_location"
+            android:text="@string/searchresults_select_location"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white" />
 
