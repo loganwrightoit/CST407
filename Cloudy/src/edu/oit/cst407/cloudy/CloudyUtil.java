@@ -62,7 +62,7 @@ public class CloudyUtil {
                 int temp = location.getInt("temp");
 
                 MetaLocation metaLocation = new MetaLocation(city, state, lat, lng);
-                metaLocation.setWeather(weather);
+                metaLocation.setCurrentWeather(weather);
                 metaLocation.setTemp(temp);
                 
                 if (location.has("date")) {

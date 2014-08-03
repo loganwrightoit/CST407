@@ -31,7 +31,7 @@ public class ForecastTask extends AsyncTask<MetaLocation, Void, MetaLocation[]> 
                 metaLocation.setCreationDate(date);
 
                 JSONObject current = object.getJSONObject("currentobservation");
-                metaLocation.setWeather(current.getString("Weather"));
+                metaLocation.setCurrentWeather(current.getString("Weather"));
                 metaLocation.setTemp(current.getInt("Temp"));
             } catch (Exception e) {
                 e.printStackTrace();

@@ -19,8 +19,12 @@ public class DetailActivity extends Activity {
         handleIntent(getIntent());
 
         TextView detail_location_text = (TextView) findViewById(R.id.detail_location_text);
+        TextView detail_temperature_text = (TextView) findViewById(R.id.detail_temperature_text);
+        TextView detail_weather_text = (TextView) findViewById(R.id.detail_weather_text);
         
         detail_location_text.setText(String.format("%s, %s", metaLocation.getCity(), metaLocation.getState()));
+        detail_temperature_text.setText(String.format("%s°", metaLocation.getTemp()));
+        detail_weather_text.setText("Weather Conditions");
     }
     
     private void handleIntent(Intent intent) {

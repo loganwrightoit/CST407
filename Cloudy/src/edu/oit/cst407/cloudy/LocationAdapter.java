@@ -1,6 +1,8 @@
 package edu.oit.cst407.cloudy;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -54,11 +56,11 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> implements IFore
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolderItem holder = null;
+        ViewHolder holder = null;
         final MetaLocation metaLocation = objects.get(position);
 
         if (convertView == null) {
-            holder = new ViewHolderItem();
+            holder = new ViewHolder();
             convertView = inflater.inflate(R.layout.list_item_weatherlocation, parent, false);
 
             holder.loading_container = (RelativeLayout) convertView.findViewById(R.id.loading_container);
@@ -73,7 +75,7 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> implements IFore
             
             convertView.setTag(holder);             
         } else {
-            holder = (ViewHolderItem) convertView.getTag();
+            holder = (ViewHolder) convertView.getTag();
         }
 
         /*
@@ -93,7 +95,7 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> implements IFore
             holder.weather_container.setVisibility(View.VISIBLE);
             holder.location_text.setText(String.format("%s, %s", metaLocation.getCity(), metaLocation.getState()));
             holder.temperature_text.setText(String.format("%s°", metaLocation.getTemp()));
-            holder.weather_text.setText(metaLocation.getWeather());
+            holder.weather_text.setText(metaLocation.getCurrentWeather());
             
             /* Add pinpoint icon next to location if it's your current location. */
             
@@ -105,22 +107,20 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> implements IFore
             }
             
             /*
-             * Refresh the forecast if MetaLocation date has expired.
+             * Refresh the forecast if MetaLocation date has expired
+             * and a task for this location isn't currently running.
              * This time is approximated at one hour for weather.gov.
              */
-            if (metaLocation.hasExpired()) {
-                Log.d("DEBUG", String.format("Forecast is current for %s, %s", metaLocation.getCity(), metaLocation.getState()));
-            } else if(!taskList.contains(metaLocation)) {
-                Log.d("DEBUG", String.format("Expired forecast on load for %s, %s", metaLocation.getCity(), metaLocation.getState()));
+            if (metaLocation.hasExpired() && !taskList.contains(metaLocation)) {
+                Log.d("DEBUG", String.format("Calling forecast for %s, %s with expired date %s", metaLocation.getCity(), metaLocation.getState(), metaLocation.getCreationDate()));
                 getForecast(holder, metaLocation);
             }
             
-            final ViewHolderItem tempHolder = holder;
+            final ViewHolder tempHolder = holder;
             holder.refreshButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (!taskList.contains(metaLocation)) {
-                        Log.d("DEBUG", "Attempting to refresh location.");
                         getForecast(tempHolder, metaLocation);
                     }
                 }
@@ -146,7 +146,7 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> implements IFore
      * on ListView item.
      * @param location
      */
-    public void getForecast(ViewHolderItem holder, MetaLocation location) {
+    public void getForecast(ViewHolder holder, MetaLocation location) {
         holder.weather_container.setVisibility(View.INVISIBLE);
         holder.loading_container.setVisibility(View.VISIBLE);
         holder.loading_text.setText(R.string.main_refreshing_location);
@@ -158,11 +158,26 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> implements IFore
     public void onForecastTaskPostExecute(MetaLocation[] locations) {
         for (MetaLocation metaLocation : locations) {
             taskList.remove(metaLocation);
+            
+            /*
+             * If the creation date is over an hour old, it hasn't updated
+             * remotely in a while, and we should initialize the date to the
+             * current date minus 45 minutes to avoid forecast task loops.
+             * 
+             * This will cause the creation time to expire after 15 minutes.
+             */
+            Date currentDate = new Date();
+            long duration = currentDate.getTime() - metaLocation.getCreationDate().getTime();        
+            if (TimeUnit.MILLISECONDS.toHours(duration) >= 1) {
+                long newTime = currentDate.getTime() - 2700000;
+                metaLocation.setCreationDate(new Date(newTime));
+            }
+            
         }
         notifyDataSetChanged();
     }
 
-    static class ViewHolderItem {
+    static class ViewHolder {
         RelativeLayout loading_container;
         TextView loading_text;
         RelativeLayout weather_container;

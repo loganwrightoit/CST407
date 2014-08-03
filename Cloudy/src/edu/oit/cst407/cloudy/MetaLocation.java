@@ -41,11 +41,11 @@ public class MetaLocation {
         return lng;
     }
 
-    public String getWeather() {
+    public String getCurrentWeather() {
         return this.weather;
     }
 
-    public void setWeather(String weather) {
+    public void setCurrentWeather(String weather) {
         this.weather = weather;
     }
         
@@ -61,6 +61,10 @@ public class MetaLocation {
     	this.date = date;
     }
     
+    public Date getCreationDate() {
+        return date;
+    }
+    
     /**
      * Checks whether the last forecast refresh date is outdated.
      * @return whether data is outdated
@@ -69,8 +73,8 @@ public class MetaLocation {
 		if (date != null) {
 			Date currentDate = new Date();
 			long duration  = currentDate.getTime() - date.getTime();
-			long minutes = TimeUnit.MILLISECONDS.toHours(duration);			
-			return minutes >= 1;
+			long hours = TimeUnit.MILLISECONDS.toHours(duration);			
+			return hours >= 1;
 		} else {
 			return true;
 		}
