@@ -25,7 +25,7 @@ public class SearchResultsActivity extends ListActivity implements ILocationTask
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
 
-        progressBar = (ProgressBar) findViewById(id.ProgressBar00);
+        progressBar = (ProgressBar) findViewById(id.refresh_bar);
         adapter = new ArrayAdapter<MetaLocation>(this, android.R.layout.simple_list_item_1, list);
         setListAdapter(adapter);
 

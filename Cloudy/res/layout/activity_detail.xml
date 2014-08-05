@@ -5,46 +5,91 @@
     android:padding="10dp"
     android:background="@android:color/background_dark" >
 
-    <TextView
-        android:id="@+id/detail_location_text"
+    <RelativeLayout
+        android:id="@+id/refresh_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@android:color/white" />
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:visibility="invisible" >
 
-    <ImageButton
-        android:id="@+id/detail_refresh_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:contentDescription="@string/main_refresh_location"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_action_refresh_location" />
+        <ProgressBar
+            android:id="@+id/refresh_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" />
 
-    <TextView
-        android:id="@+id/detail_temperature_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/detail_location_text"
-        android:textColor="@android:color/holo_blue_light"
-        android:textSize="60sp" />
+        <TextView
+            android:id="@+id/refresh_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/refresh_bar"
+            android:minWidth="50dp"
+            android:text="@string/refreshing_location"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/white" />
 
-    <TextView
-        android:id="@+id/detail_weather_current_text"
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/content_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/detail_temperature_text"
-        android:paddingBottom="5dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@android:color/white" />
+        android:layout_height="match_parent" >
+        
+	    <TextView
+	        android:id="@+id/location_text"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textAppearance="?android:attr/textAppearanceLarge"
+	        android:textColor="@android:color/white" />
+	
+	    <ImageButton
+	        android:id="@+id/refresh_button"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_alignParentTop="true"
+	        android:background="@android:color/transparent"
+	        android:contentDescription="@string/refresh_location"
+	        android:src="@drawable/ic_action_refresh_location" />
+	    
+	    <ImageButton
+            android:id="@+id/delete_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:contentDescription="@string/delete_location"
+            android:layout_below="@+id/refresh_button"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_action_delete_location" />
+	
+	    <TextView
+	        android:id="@+id/temperature_text"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/location_text"
+	        android:textColor="@android:color/holo_blue_light"
+	        android:textSize="60sp" />
+	
+	    <TextView
+	        android:id="@+id/weather_text"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/temperature_text"
+	        android:paddingBottom="5dp"
+	        android:textAppearance="?android:attr/textAppearanceMedium"
+	        android:textColor="@android:color/white" />
+	
+	    <ListView
+	        android:id="@android:id/list"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/weather_text" >
+	    </ListView>
 
-    <ListView
-        android:id="@android:id/list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/detail_weather_current_text" >
-    </ListView>
+    </RelativeLayout>
 
 </RelativeLayout>

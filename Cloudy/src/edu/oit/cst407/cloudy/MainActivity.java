@@ -1,5 +1,8 @@
 package edu.oit.cst407.cloudy;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import android.app.Activity;
 import android.app.ListActivity;
 import android.app.SearchManager;
@@ -16,7 +19,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SearchView;
 
-public class MainActivity extends ListActivity implements LocationListener {
+public class MainActivity extends ListActivity implements LocationListener, Observer {
 
     private LocationManager locationManager = null;
     private static LocationAdapter adapter = null;
@@ -27,18 +30,25 @@ public class MainActivity extends ListActivity implements LocationListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        CloudyUtil.INSTANCE.addObserver(this);
 
         /* Prepare adapter */
 
         SharedPreferences prefs = getPreferences(MODE_PRIVATE);
         String locations = prefs.getString("locations", "");
-        adapter = new LocationAdapter(this, CloudyUtil.getListFromJsonString(locations));
+        adapter = new LocationAdapter(this, CloudyUtil.INSTANCE.getListFromJsonString(locations));
         setListAdapter(adapter);
 
         /* Start listening to obtain current location */
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloudyUtil.INSTANCE.deleteObserver(this);
     }
 
     @Override
@@ -98,7 +108,7 @@ public class MainActivity extends ListActivity implements LocationListener {
         Activity activity = (Activity) context;
         SharedPreferences prefs = activity.getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("locations", CloudyUtil.getListAsJsonString("locations", adapter.objects));
+        editor.putString("locations", CloudyUtil.INSTANCE.getListAsJsonString("locations", adapter.objects));
         editor.apply();
     }
 
@@ -110,5 +120,10 @@ public class MainActivity extends ListActivity implements LocationListener {
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+    @Override
+    public void update(Observable observable, Object data) {
+        adapter.notifyDataSetChanged();
+    }
 
 }

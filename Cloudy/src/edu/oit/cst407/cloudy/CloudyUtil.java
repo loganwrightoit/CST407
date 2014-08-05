@@ -1,6 +1,7 @@
 package edu.oit.cst407.cloudy;
 
 import java.util.ArrayList;
+import java.util.Observable;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -12,9 +13,44 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CloudyUtil {
+import android.os.AsyncTask;
+import android.view.View;
 
-    public static JSONObject getJson(String url) {
+public class CloudyUtil extends Observable implements IForecastTask {
+
+    public final static CloudyUtil INSTANCE = new CloudyUtil();
+    private ArrayList<MetaLocation> taskList = new ArrayList<MetaLocation>();
+    
+    private CloudyUtil() {}
+
+    public boolean hasTask(MetaLocation metaLocation) {
+        return taskList.contains(metaLocation);
+    }
+    
+    /**
+     * Creates forecast inquiry for location(s) and toggles refresh state
+     * on ViewHolder item.
+     * @param location
+     */
+    public void getForecast(CurrentConditionsViewHolder viewHolder, MetaLocation location) {
+        if (!taskList.contains(location)) {
+            viewHolder.content_container.setVisibility(View.INVISIBLE);
+            viewHolder.refresh_container.setVisibility(View.VISIBLE);
+            taskList.add(location);
+            new ForecastTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, location);
+        }
+    }
+    
+    @Override
+    public void onForecastTaskPostExecute(MetaLocation[] location) {
+        for (MetaLocation metaLocation : location) {
+            taskList.remove(metaLocation);
+        }
+        setChanged();
+        notifyObservers();
+    }
+    
+    public JSONObject getJson(String url) {
         try {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(url);
@@ -27,7 +63,7 @@ public class CloudyUtil {
         }
     }
 
-    public static String getListAsJsonString(String key, ArrayList<MetaLocation> list) {
+    public String getListAsJsonString(String key, ArrayList<MetaLocation> list) {
         JSONObject object = new JSONObject();
 
         try {
@@ -43,7 +79,7 @@ public class CloudyUtil {
         return object.toString();
     }
 
-    public static ArrayList<MetaLocation> getListFromJsonString(String string) {
+    public ArrayList<MetaLocation> getListFromJsonString(String string) {
         ArrayList<MetaLocation> list = new ArrayList<MetaLocation>();
 
         try {

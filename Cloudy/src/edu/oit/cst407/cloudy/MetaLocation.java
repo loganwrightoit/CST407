@@ -7,8 +7,6 @@ import java.util.concurrent.TimeUnit;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-
 public class MetaLocation {
 
     private WeatherGovData weatherData = new WeatherGovData();
@@ -115,7 +113,10 @@ public class MetaLocation {
             jsonObject.put("lat", lat);
             jsonObject.put("lng", lng);
             jsonObject.put("weatherData", weatherData.toString());
-            jsonObject.put("lastUpdate", DateFormat.getDateTimeInstance().format(lastUpdate));
+            
+            if (lastUpdate != null) {
+                jsonObject.put("lastUpdate", DateFormat.getDateTimeInstance().format(lastUpdate));
+            }
 
             return jsonObject;
         } catch (JSONException e) {
@@ -131,13 +132,14 @@ public class MetaLocation {
             double lat = object.getDouble("lat");
             double lng = object.getDouble("lng");
             String weatherData = object.getString("weatherData");
-            Date lastUpdate = DateFormat.getDateTimeInstance().parse(object.getString("lastUpdate"));
             
-            Log.d("DEBUG", "fromJSONObject() lastUpdate = " + lastUpdate);
-
             MetaLocation metaLocation = new MetaLocation(city, state, lat, lng);
             metaLocation.weatherData.parse(weatherData);
-            metaLocation.lastUpdate = lastUpdate;
+            
+            if (object.has("lastUpdate")) {
+                Date lastUpdate = DateFormat.getDateTimeInstance().parse(object.getString("lastUpdate"));
+                metaLocation.lastUpdate = lastUpdate;
+            }
 
             return metaLocation;
         } catch (Exception e) {

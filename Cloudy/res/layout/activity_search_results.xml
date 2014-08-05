@@ -29,7 +29,7 @@
     </LinearLayout>
 
     <ProgressBar
-        android:id="@+id/ProgressBar00"
+        android:id="@+id/refresh_bar"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

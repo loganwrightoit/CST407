@@ -18,7 +18,7 @@ public class LocationTask extends AsyncTask<String, Void, MetaLocation[]> {
 
     @Override
     protected MetaLocation[] doInBackground(String... params) {
-        JSONObject object = CloudyUtil.getJson(params[0]);
+        JSONObject object = CloudyUtil.INSTANCE.getJson(params[0]);
         ArrayList<MetaLocation> list = new ArrayList<MetaLocation>();
 
         try {

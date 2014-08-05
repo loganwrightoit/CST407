@@ -3,7 +3,6 @@ package edu.oit.cst407.cloudy;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,15 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class LocationAdapter extends ArrayAdapter<MetaLocation> implements IForecastTask {
+public class LocationAdapter extends ArrayAdapter<MetaLocation> {
 
     public ArrayList<MetaLocation> objects;
-    private LayoutInflater inflater;
-    private ArrayList<MetaLocation> taskList = new ArrayList<MetaLocation>();
+    private LayoutInflater inflater;    
 
     public LocationAdapter(Context context, ArrayList<MetaLocation> objects) {
         super(context, 0, objects);
@@ -30,6 +27,14 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> implements IFore
     public void addItem(MetaLocation metaLocation) {
         objects.add(metaLocation);
         MainActivity.saveState(LocationAdapter.this.getContext());
+        notifyDataSetChanged();
+    }
+    
+    @Override
+    public void remove(MetaLocation metaLocation) {
+        super.remove(metaLocation);
+        MainActivity.saveState(LocationAdapter.this.getContext());
+        Toast.makeText(getContext(), String.format("Removed %s, %s from list.", metaLocation.getCity(), metaLocation.getState()), Toast.LENGTH_SHORT).show();
         notifyDataSetChanged();
     }
 
@@ -54,26 +59,23 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> implements IFore
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = null;
+        CurrentConditionsViewHolder holder = null;
         final MetaLocation metaLocation = objects.get(position);
 
         if (convertView == null) {
-            holder = new ViewHolder();
             convertView = inflater.inflate(R.layout.list_item_location, parent, false);
-
-            holder.loading_container = (RelativeLayout) convertView.findViewById(R.id.loading_container);
-            holder.loading_text = (TextView) convertView.findViewById(R.id.loading_text);
-            holder.weather_container = (RelativeLayout) convertView.findViewById(R.id.weather_container);
-            holder.location_text = (TextView) convertView.findViewById(R.id.detail_location_text);
+            
+            holder = new CurrentConditionsViewHolder(convertView);
+            holder.location_text = (TextView) convertView.findViewById(R.id.location_text);
             holder.temperature_text = (TextView) convertView.findViewById(R.id.temperature_text);
             holder.weather_text = (TextView) convertView.findViewById(R.id.weather_text);
-            holder.currentLocation_image = (ImageView) convertView.findViewById(R.id.current_location_image);
-            holder.refreshButton = (ImageButton) convertView.findViewById(R.id.refresh_button);
-            holder.deleteButton = (ImageButton) convertView.findViewById(R.id.delete_button);
-
+            holder.current_location = (ImageView) convertView.findViewById(R.id.current_location_image);
+            holder.refresh_button = (ImageButton) convertView.findViewById(R.id.refresh_button);
+            holder.delete_button = (ImageButton) convertView.findViewById(R.id.delete_button);
+            
             convertView.setTag(holder);
         } else {
-            holder = (ViewHolder) convertView.getTag();
+            holder = (CurrentConditionsViewHolder) convertView.getTag();
         }
 
         /*
@@ -82,10 +84,10 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> implements IFore
          * from clearing the refreshing state of other locations upon
          * a completed forecast task.
          */
-        if (taskList.contains(metaLocation)) {
+        if (CloudyUtil.INSTANCE.hasTask(metaLocation)) {
 
-            holder.loading_container.setVisibility(View.VISIBLE);
-            holder.weather_container.setVisibility(View.INVISIBLE);
+            holder.refresh_container.setVisibility(View.VISIBLE);
+            holder.content_container.setVisibility(View.INVISIBLE);
 
         } else {
 
@@ -96,12 +98,12 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> implements IFore
              */
             if (metaLocation.hasExpired()) {
                 
-                getForecast(holder, metaLocation);
+                CloudyUtil.INSTANCE.getForecast(holder, metaLocation);
                 
             } else {
 
-                holder.loading_container.setVisibility(View.INVISIBLE);
-                holder.weather_container.setVisibility(View.VISIBLE);
+                holder.refresh_container.setVisibility(View.INVISIBLE);
+                holder.content_container.setVisibility(View.VISIBLE);
                 holder.location_text.setText(String.format("%s, %s", metaLocation.getCity(), metaLocation.getState()));
                 holder.temperature_text.setText(String.format("%s°", metaLocation.getWeatherData().getCurrentTemperature()));
                 holder.weather_text.setText(metaLocation.getWeatherData().getCurrentWeather());
@@ -110,26 +112,23 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> implements IFore
 
                 MetaLocation currentLocation = CurrentLocation.currentLocation;
                 if (currentLocation != null && currentLocation.equals(metaLocation)) {
-                    holder.currentLocation_image.setVisibility(View.VISIBLE);
+                    holder.current_location.setVisibility(View.VISIBLE);
                 } else {
-                    holder.currentLocation_image.setVisibility(View.INVISIBLE);
+                    holder.current_location.setVisibility(View.INVISIBLE);
                 }
 
-                final ViewHolder tempHolder = holder;
-                holder.refreshButton.setOnClickListener(new OnClickListener() {
+                final CurrentConditionsViewHolder tempHolder = holder;
+                holder.refresh_button.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        getForecast(tempHolder, metaLocation);
+                        CloudyUtil.INSTANCE.getForecast(tempHolder, metaLocation);
                     }
                 });
 
-                holder.deleteButton.setOnClickListener(new OnClickListener() {
+                holder.delete_button.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         remove(metaLocation);
-                        MainActivity.saveState(LocationAdapter.this.getContext());
-                        notifyDataSetChanged();
-                        Toast.makeText(getContext(), String.format("Removed %s, %s from list.", metaLocation.getCity(), metaLocation.getState()), Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -137,41 +136,6 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> implements IFore
         }
 
         return convertView;
-    }
-
-    /**
-     * Creates forecast inquiry for location(s) and toggles refresh state
-     * on ListView item.
-     * @param location
-     */
-    public void getForecast(ViewHolder holder, MetaLocation location) {
-        if (!taskList.contains(location)) {
-            holder.weather_container.setVisibility(View.INVISIBLE);
-            holder.loading_container.setVisibility(View.VISIBLE);
-            holder.loading_text.setText(R.string.main_refreshing_location);
-            taskList.add(location);
-            new ForecastTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, location);
-        }
-    }
-
-    @Override
-    public void onForecastTaskPostExecute(MetaLocation[] location) {
-        for (MetaLocation metaLocation : location) {
-            taskList.remove(metaLocation);
-        }
-        notifyDataSetChanged();
-    }
-
-    static class ViewHolder {
-        RelativeLayout loading_container;
-        TextView loading_text;
-        RelativeLayout weather_container;
-        TextView location_text;
-        TextView temperature_text;
-        TextView weather_text;
-        ImageView currentLocation_image;
-        ImageButton refreshButton;
-        ImageButton deleteButton;
     }
 
 }
