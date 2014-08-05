@@ -18,7 +18,7 @@ public class ForecastTask extends AsyncTask<MetaLocation, Void, MetaLocation[]> 
             MetaLocation metaLocation = location;
             String url = String.format("http://forecast.weather.gov/MapClick.php?lat=%s&lon=%s&FcstType=json", metaLocation.getLatitude(), metaLocation.getLongitude());
             JSONObject object = CloudyUtil.getJson(url);
-            metaLocation.setWeatherData(object.toString());
+            metaLocation.getWeatherData().parse(object.toString());
         }
 
         return params;

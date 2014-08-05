@@ -18,12 +18,10 @@ public class LocationDetailAdapter extends ArrayAdapter<MetaLocation> {
     public LocationDetailAdapter(Context context, ArrayList<MetaLocation> list) {
         super(context, 0, list);
         MetaLocation metaLocation = list.get(0);
-        
-        try {
-            period = metaLocation.getWeatherPeriods();
-            periodWeather = metaLocation.getWeatherPeriodConditions();
-        } catch (Exception e) {}
-        
+
+        period = metaLocation.getWeatherData().getForecastPeriods();
+        periodWeather = metaLocation.getWeatherData().getForecastPeriodConditions();
+
         inflater = LayoutInflater.from(getContext());
     }
     

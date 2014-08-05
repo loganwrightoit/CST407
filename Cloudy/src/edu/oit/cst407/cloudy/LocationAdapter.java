@@ -1,11 +1,10 @@
 package edu.oit.cst407.cloudy;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -91,53 +90,51 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> implements IFore
 
         } else {
 
-            holder.loading_container.setVisibility(View.INVISIBLE);
-            holder.weather_container.setVisibility(View.VISIBLE);
-            holder.location_text.setText(String.format("%s, %s", metaLocation.getCity(), metaLocation.getState()));
-            
-            try {
-                holder.temperature_text.setText(String.format("%s°", metaLocation.getCurrentTemperature()));
-                holder.weather_text.setText(metaLocation.getCurrentWeather());
-            } catch (Exception e) {}
-
-            /* Add pinpoint icon next to location if it's your current location. */
-
-            MetaLocation currentLocation = CurrentLocation.currentLocation;
-            if (currentLocation != null && currentLocation.equals(metaLocation)) {
-                holder.currentLocation_image.setVisibility(View.VISIBLE);
-            } else {
-                holder.currentLocation_image.setVisibility(View.INVISIBLE);
-            }
-
             /*
              * Refresh the forecast if MetaLocation date has expired
              * and a task for this location isn't currently running.
              * This time is approximated at one hour for weather.gov.
              */
-            if (metaLocation.hasExpired() && !taskList.contains(metaLocation)) {
+            if (metaLocation.hasExpired()) {
+                
                 getForecast(holder, metaLocation);
-            }
+                
+            } else {
 
-            final ViewHolder tempHolder = holder;
-            holder.refreshButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!taskList.contains(metaLocation)) {
+                holder.loading_container.setVisibility(View.INVISIBLE);
+                holder.weather_container.setVisibility(View.VISIBLE);
+                holder.location_text.setText(String.format("%s, %s", metaLocation.getCity(), metaLocation.getState()));
+                holder.temperature_text.setText(String.format("%s°", metaLocation.getWeatherData().getCurrentTemperature()));
+                holder.weather_text.setText(metaLocation.getWeatherData().getCurrentWeather());
+
+                /* Add pinpoint icon next to location if it's the current location. */
+
+                MetaLocation currentLocation = CurrentLocation.currentLocation;
+                if (currentLocation != null && currentLocation.equals(metaLocation)) {
+                    holder.currentLocation_image.setVisibility(View.VISIBLE);
+                } else {
+                    holder.currentLocation_image.setVisibility(View.INVISIBLE);
+                }
+
+                final ViewHolder tempHolder = holder;
+                holder.refreshButton.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
                         getForecast(tempHolder, metaLocation);
                     }
-                }
-            });
+                });
 
-            holder.deleteButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    remove(metaLocation);
-                    MainActivity.saveState(LocationAdapter.this.getContext());
-                    notifyDataSetChanged();
-                    Toast.makeText(getContext(), String.format("Removed %s, %s from list.", metaLocation.getCity(), metaLocation.getState()), Toast.LENGTH_SHORT).show();
-                }
-            });
+                holder.deleteButton.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        remove(metaLocation);
+                        MainActivity.saveState(LocationAdapter.this.getContext());
+                        notifyDataSetChanged();
+                        Toast.makeText(getContext(), String.format("Removed %s, %s from list.", metaLocation.getCity(), metaLocation.getState()), Toast.LENGTH_SHORT).show();
+                    }
+                });
 
+            }
         }
 
         return convertView;
@@ -149,33 +146,20 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> implements IFore
      * @param location
      */
     public void getForecast(ViewHolder holder, MetaLocation location) {
-        holder.weather_container.setVisibility(View.INVISIBLE);
-        holder.loading_container.setVisibility(View.VISIBLE);
-        holder.loading_text.setText(R.string.main_refreshing_location);
-        taskList.add(location);
-        new ForecastTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, location);
+        if (!taskList.contains(location)) {
+            Log.d("DEBUG", "Grabbing forecast for view.");
+            holder.weather_container.setVisibility(View.INVISIBLE);
+            holder.loading_container.setVisibility(View.VISIBLE);
+            holder.loading_text.setText(R.string.main_refreshing_location);
+            taskList.add(location);
+            new ForecastTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, location);
+        }
     }
 
     @Override
-    public void onForecastTaskPostExecute(MetaLocation[] locations) {
-        for (MetaLocation metaLocation : locations) {
+    public void onForecastTaskPostExecute(MetaLocation[] location) {
+        for (MetaLocation metaLocation : location) {
             taskList.remove(metaLocation);
-
-            /*
-             * If the creation date is over an hour old, it hasn't updated
-             * remotely in a while, and we should initialize the date to the
-             * current date minus 45 minutes to avoid forecast task loops.
-             *
-             * This will cause the creation time to expire after 15 minutes.
-             */
-            try {
-                Date currentDate = new Date();
-                long duration = currentDate.getTime() - metaLocation.getCreationDate().getTime();
-                if (TimeUnit.MILLISECONDS.toHours(duration) >= 1) {
-                    long newTime = currentDate.getTime() - 2700000;
-                    metaLocation.setWeatherDate(new Date(newTime));
-                }
-            } catch (Exception e) {}
         }
         notifyDataSetChanged();
     }

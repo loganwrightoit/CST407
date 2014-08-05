@@ -26,11 +26,8 @@ public class DetailActivity extends ListActivity {
         TextView detail_weather_current_text = (TextView) findViewById(R.id.detail_weather_current_text);
         
         detail_location_text.setText(String.format("%s, %s", metaLocation.getCity(), metaLocation.getState()));
-        
-        try {
-            detail_temperature_text.setText(String.format("%s°", metaLocation.getCurrentTemperature()));
-            detail_weather_current_text.setText(metaLocation.getCurrentWeather());
-        } catch (Exception e) {}
+        detail_temperature_text.setText(String.format("%s°", metaLocation.getWeatherData().getCurrentTemperature()));
+        detail_weather_current_text.setText(metaLocation.getWeatherData().getCurrentWeather());
 
         ArrayList<MetaLocation> list = new ArrayList<MetaLocation>();
         for (int count = 0; count < 13; ++count) {

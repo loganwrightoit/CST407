@@ -73,7 +73,7 @@ public class SearchResultsActivity extends ListActivity implements ILocationTask
 
             // Add locations to list, disable if already exists
             for (MetaLocation location : locations) {
-                list.add(0, location);
+                list.add(location);
             }
 
             // Notify adapter that list contains new items
