@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -147,7 +146,6 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> implements IFore
      */
     public void getForecast(ViewHolder holder, MetaLocation location) {
         if (!taskList.contains(location)) {
-            Log.d("DEBUG", "Grabbing forecast for view.");
             holder.weather_container.setVisibility(View.INVISIBLE);
             holder.loading_container.setVisibility(View.VISIBLE);
             holder.loading_text.setText(R.string.main_refreshing_location);

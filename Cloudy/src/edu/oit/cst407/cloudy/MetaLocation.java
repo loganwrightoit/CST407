@@ -1,6 +1,6 @@
 package edu.oit.cst407.cloudy;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -64,7 +64,6 @@ public class MetaLocation {
             long duration  = currentDate.getTime() - lastUpdate.getTime();
             long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
             if (minutes < 15) {
-                Log.d("DEBUG", String.format("Last update for %s, %s expired, refreshing.", getCity(), getState()));
                 return false;
             }
         }
@@ -116,7 +115,7 @@ public class MetaLocation {
             jsonObject.put("lat", lat);
             jsonObject.put("lng", lng);
             jsonObject.put("weatherData", weatherData.toString());
-            jsonObject.put("lastUpdate", SimpleDateFormat.getDateInstance().format(lastUpdate));
+            jsonObject.put("lastUpdate", DateFormat.getDateTimeInstance().format(lastUpdate));
 
             return jsonObject;
         } catch (JSONException e) {
@@ -132,14 +131,14 @@ public class MetaLocation {
             double lat = object.getDouble("lat");
             double lng = object.getDouble("lng");
             String weatherData = object.getString("weatherData");
-            Date lastUpdate = SimpleDateFormat.getDateInstance().parse(object.getString("lastUpdate"));
+            Date lastUpdate = DateFormat.getDateTimeInstance().parse(object.getString("lastUpdate"));
+            
+            Log.d("DEBUG", "fromJSONObject() lastUpdate = " + lastUpdate);
 
             MetaLocation metaLocation = new MetaLocation(city, state, lat, lng);
             metaLocation.weatherData.parse(weatherData);
             metaLocation.lastUpdate = lastUpdate;
-            
-            Log.d("DEBUG", String.format("Restoring MetaLocation %s, %s", metaLocation.getCity(), metaLocation.getState()));
-            
+
             return metaLocation;
         } catch (Exception e) {
             e.printStackTrace();
