@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:orientation="horizontal"
+    android:weightSum="2"
+    android:background="@android:color/background_dark"
+    android:baselineAligned="false" >
+
+    <RelativeLayout
+        android:id="@+id/land_detail_left"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingRight="10dp" >
+
+        <TextView
+            android:id="@+id/detail_location_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/white" />
+
+        <ImageButton
+            android:id="@+id/detail_refresh_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:contentDescription="@string/main_refresh_location"
+            android:src="@drawable/ic_action_refresh_location" />
+
+        <TextView
+            android:id="@+id/detail_temperature_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/detail_refresh_button"
+            android:textColor="@android:color/holo_blue_light"
+            android:textSize="60sp" />
+
+        <TextView
+            android:id="@+id/detail_weather_current_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/detail_temperature_text"
+            android:paddingBottom="5dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/white" />
+
+    </RelativeLayout>
+    
+    <RelativeLayout
+        android:id="@+id/land_detail_right"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" >
+
+        <ListView
+            android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </ListView>
+
+    </RelativeLayout>
+
+</LinearLayout>
