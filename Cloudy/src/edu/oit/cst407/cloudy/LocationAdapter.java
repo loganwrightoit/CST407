@@ -16,7 +16,7 @@ import android.widget.Toast;
 public class LocationAdapter extends ArrayAdapter<MetaLocation> {
 
     public ArrayList<MetaLocation> objects;
-    private LayoutInflater inflater;    
+    private LayoutInflater inflater;
 
     public LocationAdapter(Context context, ArrayList<MetaLocation> objects) {
         super(context, 0, objects);
@@ -77,6 +77,10 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> {
         } else {
             holder = (CurrentConditionsViewHolder) convertView.getTag();
         }
+        
+        holder.location_text.setText(String.format("%s, %s", metaLocation.getCity(), metaLocation.getState()));
+        holder.temperature_text.setText(String.format("%s°", metaLocation.getWeatherData().getCurrentTemperature()));
+        holder.weather_text.setText(metaLocation.getWeatherData().getCurrentWeather());
 
         /*
          * If a location is refreshing then the refreshing container
@@ -84,13 +88,13 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> {
          * from clearing the refreshing state of other locations upon
          * a completed forecast task.
          */
-        if (CloudyUtil.INSTANCE.hasTask(metaLocation)) {
+        if (!CloudyUtil.INSTANCE.hasTask(metaLocation)) {
 
-            holder.refresh_container.setVisibility(View.VISIBLE);
-            holder.content_container.setVisibility(View.INVISIBLE);
-
-        } else {
-
+            if (holder.refresh_container.getVisibility() == View.VISIBLE){ 
+                holder.refresh_container.startAnimation(CloudyUtil.anim_fade_out);
+                holder.refresh_container.setVisibility(View.INVISIBLE);
+            }
+            
             /*
              * Refresh the forecast if MetaLocation date has expired
              * and a task for this location isn't currently running.
@@ -101,12 +105,6 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> {
                 CloudyUtil.INSTANCE.getForecast(holder, metaLocation);
                 
             } else {
-
-                holder.refresh_container.setVisibility(View.INVISIBLE);
-                holder.content_container.setVisibility(View.VISIBLE);
-                holder.location_text.setText(String.format("%s, %s", metaLocation.getCity(), metaLocation.getState()));
-                holder.temperature_text.setText(String.format("%s°", metaLocation.getWeatherData().getCurrentTemperature()));
-                holder.weather_text.setText(metaLocation.getWeatherData().getCurrentWeather());
 
                 /* Add pinpoint icon next to location if it's the current location. */
 

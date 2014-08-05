@@ -15,12 +15,15 @@ import org.json.JSONObject;
 
 import android.os.AsyncTask;
 import android.view.View;
+import android.view.animation.Animation;
 
 public class CloudyUtil extends Observable implements IForecastTask {
 
     public final static CloudyUtil INSTANCE = new CloudyUtil();
     private ArrayList<MetaLocation> taskList = new ArrayList<MetaLocation>();
-    
+    public static Animation anim_fade_in;
+    public static Animation anim_fade_out;
+
     private CloudyUtil() {}
 
     public boolean hasTask(MetaLocation metaLocation) {
@@ -34,8 +37,9 @@ public class CloudyUtil extends Observable implements IForecastTask {
      */
     public void getForecast(CurrentConditionsViewHolder viewHolder, MetaLocation location) {
         if (!taskList.contains(location)) {
-            viewHolder.content_container.setVisibility(View.INVISIBLE);
             viewHolder.refresh_container.setVisibility(View.VISIBLE);
+            viewHolder.refresh_container.bringToFront();
+            viewHolder.refresh_container.startAnimation(CloudyUtil.anim_fade_in);
             taskList.add(location);
             new ForecastTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, location);
         }

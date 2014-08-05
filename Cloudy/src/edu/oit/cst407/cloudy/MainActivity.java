@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.ListView;
 import android.widget.SearchView;
 
@@ -30,8 +31,12 @@ public class MainActivity extends ListActivity implements LocationListener, Obse
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        CloudyUtil.INSTANCE.addObserver(this);
 
+        CloudyUtil.anim_fade_in = AnimationUtils.loadAnimation(getApplicationContext(), R.animator.anim_fade_in);
+        CloudyUtil.anim_fade_out = AnimationUtils.loadAnimation(getApplicationContext(), R.animator.anim_fade_out);
+
+        CloudyUtil.INSTANCE.addObserver(this);
+        
         /* Prepare adapter */
 
         SharedPreferences prefs = getPreferences(MODE_PRIVATE);
