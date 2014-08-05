@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cloudy</string>
+    <string name="refreshing_location">Ubicación refrescante&#8230;</string>
+    <string name="main_add_location">Añadir ubicación</string>
+    <string name="main_add_location_condensed">Añadir</string>
+    <string name="main_add_location_hint">Ciudad y estado o código postal</string>
+    <string name="delete_location">Eliminar ubicación</string>
+    <string name="current_location">Ubicación actual</string>
+    <string name="refresh_location">Actualizar ubicación</string>
+    <string name="searchresults_select_location">Seleccione una ubicación</string>
+</resources>
