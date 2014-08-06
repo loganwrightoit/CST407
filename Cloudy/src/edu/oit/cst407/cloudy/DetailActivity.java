@@ -15,11 +15,11 @@ import android.widget.TextView;
 public class DetailActivity extends ListActivity implements Observer {
 
     public final static String KEY_POSITION = "POSITION";
-    
+
     private LocationDetailAdapter adapter = null;
     private MetaLocation metaLocation = null;
     private CurrentConditionsViewHolder holder = null;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +52,7 @@ public class DetailActivity extends ListActivity implements Observer {
                 finish();
             }
         });
-        
+
         ArrayList<MetaLocation> list = new ArrayList<MetaLocation>();
         for (int count = 0; count < 13; ++count) {
             list.add(metaLocation);
@@ -62,7 +62,7 @@ public class DetailActivity extends ListActivity implements Observer {
     }
 
     private void updateView() {
-        if (holder.refresh_container.getVisibility() == View.VISIBLE){ 
+        if (holder.refresh_container.getVisibility() == View.VISIBLE){
             holder.refresh_container.startAnimation(CloudyUtil.anim_fade_out);
             holder.refresh_container.setVisibility(View.INVISIBLE);
         }
@@ -70,7 +70,7 @@ public class DetailActivity extends ListActivity implements Observer {
         holder.temperature_text.setText(String.format("%s°", metaLocation.getWeatherData().getCurrentTemperature()));
         holder.weather_text.setText(metaLocation.getWeatherData().getCurrentWeather());
     }
-    
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

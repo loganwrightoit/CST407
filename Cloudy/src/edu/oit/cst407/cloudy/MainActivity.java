@@ -25,7 +25,7 @@ public class MainActivity extends ListActivity implements LocationListener, Obse
 
     private LocationManager locationManager = null;
     private static LocationAdapter adapter = null;
-    
+
     public final static String KEY_DETAIL = "detail";
 
     @Override
@@ -37,7 +37,7 @@ public class MainActivity extends ListActivity implements LocationListener, Obse
         CloudyUtil.anim_fade_out = AnimationUtils.loadAnimation(getApplicationContext(), R.animator.anim_fade_out);
 
         CloudyUtil.INSTANCE.addObserver(this);
- 
+
         /* Prepare adapter */
 
         SharedPreferences prefs = getPreferences(MODE_PRIVATE);
@@ -50,7 +50,7 @@ public class MainActivity extends ListActivity implements LocationListener, Obse
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
     }
-    
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -70,9 +70,9 @@ public class MainActivity extends ListActivity implements LocationListener, Obse
      * @param id The row id of the item that was clicked
      */
     protected void onListItemClick(ListView listView, View view, int position, long id) {
-        Intent launchDetail = new Intent(MainActivity.this, DetailActivity.class);
-        launchDetail.putExtra(DetailActivity.KEY_POSITION, Integer.toString(position));
-        startActivityForResult(launchDetail, 0);
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra(DetailActivity.KEY_POSITION, Integer.toString(position));
+        startActivityForResult(intent, 0);
     }
 
     public static LocationAdapter getAdapter() {
@@ -99,8 +99,7 @@ public class MainActivity extends ListActivity implements LocationListener, Obse
             @Override
             public boolean onQueryTextChange(String newText) { return false; }
         });
-        searchView.setIconified(false);
-        
+
         return true;
     }
 

@@ -20,12 +20,12 @@ public class WeatherGovData {
     public int currentTemperature;
 
     public WeatherGovData() {}
-    
+
     public void parse(String weatherData) {
         jsonString = weatherData;
 
         try {
-            JSONObject object = new JSONObject(weatherData); 
+            JSONObject object = new JSONObject(weatherData);
 
             /* Grab forecast creation date */
 
@@ -41,7 +41,7 @@ public class WeatherGovData {
             /* Grab future forecast periods */
 
             JSONObject time = object.getJSONObject("time");
-            JSONArray array_startPeriodName = time.getJSONArray("startPeriodName");    
+            JSONArray array_startPeriodName = time.getJSONArray("startPeriodName");
             ArrayList<String> extStartPeriodName = new ArrayList<String>();
             for (int idx = 0; idx < array_startPeriodName.length(); ++idx) {
                 extStartPeriodName.add(array_startPeriodName.getString(idx));

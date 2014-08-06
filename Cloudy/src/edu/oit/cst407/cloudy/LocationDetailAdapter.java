@@ -24,7 +24,7 @@ public class LocationDetailAdapter extends ArrayAdapter<MetaLocation> {
 
         inflater = LayoutInflater.from(getContext());
     }
-    
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;

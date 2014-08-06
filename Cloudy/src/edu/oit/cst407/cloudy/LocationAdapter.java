@@ -29,7 +29,7 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> {
         MainActivity.saveState(LocationAdapter.this.getContext());
         notifyDataSetChanged();
     }
-    
+
     @Override
     public void remove(MetaLocation metaLocation) {
         super.remove(metaLocation);
@@ -64,7 +64,7 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> {
 
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.list_item_location, parent, false);
-            
+
             holder = new CurrentConditionsViewHolder(convertView);
             holder.location_text = (TextView) convertView.findViewById(R.id.location_text);
             holder.temperature_text = (TextView) convertView.findViewById(R.id.temperature_text);
@@ -72,12 +72,12 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> {
             holder.current_location = (ImageView) convertView.findViewById(R.id.current_location_image);
             holder.refresh_button = (ImageButton) convertView.findViewById(R.id.refresh_button);
             holder.delete_button = (ImageButton) convertView.findViewById(R.id.delete_button);
-            
+
             convertView.setTag(holder);
         } else {
             holder = (CurrentConditionsViewHolder) convertView.getTag();
         }
-        
+
         holder.location_text.setText(String.format("%s, %s", metaLocation.getCity(), metaLocation.getState()));
         holder.temperature_text.setText(String.format("%s°", metaLocation.getWeatherData().getCurrentTemperature()));
         holder.weather_text.setText(metaLocation.getWeatherData().getCurrentWeather());
@@ -90,20 +90,20 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> {
          */
         if (!CloudyUtil.INSTANCE.hasTask(metaLocation)) {
 
-            if (holder.refresh_container.getVisibility() == View.VISIBLE){ 
+            if (holder.refresh_container.getVisibility() == View.VISIBLE){
                 holder.refresh_container.startAnimation(CloudyUtil.anim_fade_out);
                 holder.refresh_container.setVisibility(View.INVISIBLE);
             }
-            
+
             /*
              * Refresh the forecast if MetaLocation date has expired
              * and a task for this location isn't currently running.
              * This time is approximated at one hour for weather.gov.
              */
             if (metaLocation.hasExpired()) {
-                
+
                 CloudyUtil.INSTANCE.getForecast(holder, metaLocation);
-                
+
             } else {
 
                 /* Add pinpoint icon next to location if it's the current location. */

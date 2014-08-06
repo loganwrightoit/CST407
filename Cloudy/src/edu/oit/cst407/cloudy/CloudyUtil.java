@@ -29,7 +29,7 @@ public class CloudyUtil extends Observable implements IForecastTask {
     public boolean hasTask(MetaLocation metaLocation) {
         return taskList.contains(metaLocation);
     }
-    
+
     /**
      * Creates forecast inquiry for location(s) and toggles refresh state
      * on ViewHolder item.
@@ -44,7 +44,7 @@ public class CloudyUtil extends Observable implements IForecastTask {
             new ForecastTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, location);
         }
     }
-    
+
     @Override
     public void onForecastTaskPostExecute(MetaLocation[] location) {
         for (MetaLocation metaLocation : location) {
@@ -53,7 +53,7 @@ public class CloudyUtil extends Observable implements IForecastTask {
         setChanged();
         notifyObservers();
     }
-    
+
     public JSONObject getJson(String url) {
         try {
             HttpClient httpclient = new DefaultHttpClient();
@@ -87,7 +87,7 @@ public class CloudyUtil extends Observable implements IForecastTask {
         ArrayList<MetaLocation> list = new ArrayList<MetaLocation>();
 
         try {
-            JSONObject object = new JSONObject(string);            
+            JSONObject object = new JSONObject(string);
             JSONArray locations = object.getJSONArray("locations");
 
             for (int idx = 0; idx < locations.length(); ++idx) {
@@ -100,5 +100,5 @@ public class CloudyUtil extends Observable implements IForecastTask {
 
         return list;
     }
-    
+
 }
