@@ -39,7 +39,7 @@ public class CloudyUtil extends Observable implements IForecastTask {
         if (!taskList.contains(location)) {
             viewHolder.refresh_container.setVisibility(View.VISIBLE);
             viewHolder.refresh_container.bringToFront();
-            viewHolder.refresh_container.startAnimation(CloudyUtil.anim_fade_in);
+            viewHolder.refresh_container.startAnimation(anim_fade_in);
             taskList.add(location);
             new ForecastTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, location);
         }
