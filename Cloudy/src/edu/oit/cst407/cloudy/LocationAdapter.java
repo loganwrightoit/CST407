@@ -25,7 +25,7 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> {
     }
 
     public void addItem(MetaLocation metaLocation) {
-        objects.add(metaLocation);
+        objects.add(0, metaLocation);
         MainActivity.saveState(LocationAdapter.this.getContext());
         notifyDataSetChanged();
     }

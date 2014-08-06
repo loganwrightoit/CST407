@@ -58,7 +58,7 @@ public class SearchResultsActivity extends ListActivity implements ILocationTask
             view.setEnabled(false);
         } else {
             Toast.makeText(getApplicationContext(), String.format("Added %s, %s to list.", metaLocation.getCity(), metaLocation.getState()), Toast.LENGTH_SHORT).show();
-            adapter.add(metaLocation);
+            adapter.addItem(metaLocation);
 
             // Close search activity
             finish();

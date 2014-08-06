@@ -19,13 +19,14 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
 
 public class MainActivity extends ListActivity implements LocationListener, Observer {
 
     private LocationManager locationManager = null;
     private static LocationAdapter adapter = null;
-
-    public final static String KEY_DETAIL = "DETAIL";
+    
+    public final static String KEY_DETAIL = "detail";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,7 @@ public class MainActivity extends ListActivity implements LocationListener, Obse
         CloudyUtil.anim_fade_out = AnimationUtils.loadAnimation(getApplicationContext(), R.animator.anim_fade_out);
 
         CloudyUtil.INSTANCE.addObserver(this);
-        
+ 
         /* Prepare adapter */
 
         SharedPreferences prefs = getPreferences(MODE_PRIVATE);
@@ -79,14 +80,27 @@ public class MainActivity extends ListActivity implements LocationListener, Obse
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.global, menu);
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        final SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
+        searchView.setOnQueryTextListener(new OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchView.setIconified(true);
+                searchView.clearFocus();
+                (menu.findItem(R.id.action_search)).collapseActionView();
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) { return false; }
+        });
+        searchView.setIconified(false);
+        
         return true;
     }
 
