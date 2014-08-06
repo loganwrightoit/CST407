@@ -1,47 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:background="@android:color/black"
     android:descendantFocusability="blocksDescendants"
-    android:padding="10dp" >
-    
-    <RelativeLayout
-        android:id="@+id/refresh_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        android:background="#f0000000"
-        android:gravity="center"
-        android:visibility="invisible" >
-
-        <ProgressBar
-            android:id="@+id/refresh_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true" />
-
-        <TextView
-            android:id="@+id/refresh_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/refresh_bar"
-            android:minWidth="50dp"
-            android:text="@string/refreshing_location"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/white" />
-
-    </RelativeLayout>
-    
+    android:padding="10dp"
+    android:orientation="vertical" >
+        
     <RelativeLayout
         android:id="@+id/content_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
         android:visibility="visible" >
+	        
+	    <RelativeLayout
+	        android:id="@+id/refresh_container"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:background="#f0000000"
+	        android:gravity="center"
+	        android:visibility="visible" >
+	
+	        <ProgressBar
+	            android:id="@+id/refresh_bar"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentRight="true"
+	            android:layout_centerVertical="true" />
+	
+	        <TextView
+	            android:id="@+id/refresh_text"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_centerVertical="true"
+	            android:layout_toLeftOf="@+id/refresh_bar"
+	            android:minWidth="50dp"
+	            android:text="@string/refreshing_location"
+	            android:textAppearance="?android:attr/textAppearanceMedium"
+	            android:textColor="@android:color/white" />
+	
+	    </RelativeLayout>
         
         <TextView
             android:id="@+id/location_text"
@@ -101,4 +100,4 @@
 
     </RelativeLayout>
 
-</RelativeLayout>
+</LinearLayout>
