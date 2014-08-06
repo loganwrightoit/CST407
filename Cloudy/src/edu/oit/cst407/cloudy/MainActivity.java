@@ -70,9 +70,13 @@ public class MainActivity extends ListActivity implements LocationListener, Obse
      * @param id The row id of the item that was clicked
      */
     protected void onListItemClick(ListView listView, View view, int position, long id) {
-        Intent intent = new Intent(this, DetailActivity.class);
-        intent.putExtra(DetailActivity.KEY_POSITION, Integer.toString(position));
-        startActivityForResult(intent, 0);
+        View refresh_container = view.findViewById(R.id.refresh_container);
+
+        if (refresh_container.getVisibility() != View.VISIBLE) {
+            Intent intent = new Intent(this, DetailActivity.class);
+            intent.putExtra(DetailActivity.KEY_POSITION, Integer.toString(position));
+            startActivityForResult(intent, 0);
+        }
     }
 
     public static LocationAdapter getAdapter() {

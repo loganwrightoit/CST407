@@ -126,11 +126,14 @@ public class LocationAdapter extends ArrayAdapter<MetaLocation> {
                 holder.delete_button.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        v.startAnimation(CloudyUtil.anim_fade_out);
                         remove(metaLocation);
                     }
                 });
 
             }
+        } else {
+            holder.refresh_container.setVisibility(View.VISIBLE);
         }
 
         return convertView;
